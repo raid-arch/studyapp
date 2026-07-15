@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習帳</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --panel:#141a2e;
+    --panel2:#1b2340;
+    --border:#2a3356;
+    --text:#e8ecf7;
+    --muted:#8b93b8;
+    --accent:#7c9dff;
+    --accent2:#5865f2;
+    --good:#4ade80;
+    --bad:#f87171;
+    --warn:#fbbf24;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Hiragino Sans","Yu Gothic",-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+  }
+  #app{max-width:760px;margin:0 auto;padding:16px 16px 80px;}
+  header.top{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 4px;position:sticky;top:0;background:var(--bg);z-index:5;
+  }
+  header.top h1{font-size:20px;margin:0;display:flex;align-items:center;gap:8px;}
+  .btn{
+    appearance:none;border:1px solid var(--border);background:var(--panel2);
+    color:var(--text);border-radius:10px;padding:9px 14px;font-size:14px;
+    cursor:pointer;font-family:inherit;
+  }
+  .btn:hover{border-color:var(--accent);}
+  .btn.primary{background:var(--accent2);border-color:var(--accent2);color:#fff;font-weight:600;}
+  .btn.primary:hover{background:var(--accent);}
+  .btn.good{background:rgba(74,222,128,.15);border-color:var(--good);color:var(--good);}
+  .btn.bad{background:rgba(248,113,113,.15);border-color:var(--bad);color:var(--bad);}
+  .btn.ghost{background:transparent;}
+  .btn.small{padding:5px 10px;font-size:12px;}
+  .btn:disabled{opacity:.4;cursor:default;}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .card{
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:16px;margin-bottom:12px;
+  }
+  .card.clickable{cursor:pointer;}
+  .card.clickable:hover{border-color:var(--accent);}
+  .card-title{font-size:16px;font-weight:600;margin:0 0 4px;}
+  .card-sub{font-size:12px;color:var(--muted);}
+  .badge{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;
+    background:var(--panel2);color:var(--muted);border:1px solid var(--border);
+  }
+  .badge.due{background:rgba(251,191,36,.15);color:var(--warn);border-color:var(--warn);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+  textarea, input[type=text]{
+    width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);
+    border-radius:10px;padding:10px;font-family:inherit;font-size:14px;resize:vertical;
+  }
+  textarea{min-height:120px;}
+  label.field{display:block;font-size:12px;color:var(--muted);margin:12px 0 4px;}
+  .empty{color:var(--muted);font-size:13px;padding:24px 4px;text-align:center;}
+  .subject-color{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;}
+  .q-item{border-bottom:1px solid var(--border);padding:10px 0;}
+  .q-item:last-child{border-bottom:none;}
+  .q-item .q{font-size:14px;font-weight:600;}
+  .q-item .a{font-size:13px;color:var(--muted);margin-top:2px;}
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--panel2);border:1px solid var(--accent);color:var(--text);
+    padding:10px 18px;border-radius:10px;font-size:13px;z-index:50;
+    box-shadow:0 4px 20px rgba(0,0,0,.4);
+  }
+  .quiz-card{
+    background:var(--panel);border:1px solid var(--border);border-radius:16px;
+    padding:32px 20px;text-align:center;min-height:220px;
+    display:flex;flex-direction:column;justify-content:center;gap:16px;
+  }
+  .quiz-q{font-size:19px;font-weight:600;line-height:1.5;}
+  .quiz-a{font-size:16px;color:var(--accent);line-height:1.5;white-space:pre-wrap;}
+  .progress{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin-bottom:16px;}
+  .progress-fill{height:100%;background:var(--accent2);transition:width .2s;}
+  .link-back{color:var(--muted);font-size:13px;cursor:pointer;background:none;border:none;padding:4px 0;font-family:inherit;}
+  .link-back:hover{color:var(--accent);}
+  details.prompt-box summary{cursor:pointer;color:var(--accent);font-size:13px;margin:8px 0;}
+  details.prompt-box pre{
+    white-space:pre-wrap;background:var(--panel2);border:1px solid var(--border);
+    border-radius:10px;padding:12px;font-size:12px;color:var(--muted);max-height:260px;overflow:auto;
+  }
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-box{
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;
+    padding:20px;width:100%;max-width:380px;
+  }
+  .modal-box h3{margin:0 0 12px;font-size:16px;}
+  .modal-box p{margin:0 0 14px;font-size:14px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+  "use strict";
+  const STORAGE_KEY = "studyapp:data:v1";
+  const SUBJECT_COLORS = ["#7c9dff","#f472b6","#4ade80","#fbbf24","#38bdf8","#c084fc","#fb923c","#34d399"];
+  const BOX_INTERVALS = [1,1,2,4,9,18];
+
+  function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+  function formatLocalDate(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+  function todayStr(){ return formatLocalDate(new Date()); }
+  function addDays(dateStr, n){
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setDate(dt.getDate() + n);
+    return formatLocalDate(dt);
+  }
+  function fmtDate(dateStr){
+    const d = new Date(dateStr + "T00:00:00");
+    return `${d.getMonth()+1}/${d.getDate()}`;
+  }
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){ console.error("load failed", e); }
+    return { subjects: [], sessions: [], questions: [] };
+  }
+  let state = loadState();
+  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+  function dueQuestions(list){
+    const t = todayStr();
+    return list.filter(q => q.dueDate <= t);
+  }
+  function questionsForSession(sid){ return state.questions.filter(q => q.sessionId === sid); }
+  function sessionsForSubject(subId){ return state.sessions.filter(s => s.subjectId === subId); }
+  function subjectById(id){ return state.subjects.find(s => s.id === id); }
+  function sessionById(id){ return state.sessions.find(s => s.id === id); }
+
+  // ---- routing ----
+  let route = { view: "home" };
+  function nav(r){ route = r; render(); window.scrollTo(0,0); }
+
+  function showModal(html, onMount){
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML = `<div class="modal-box">${html}</div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", (e) => { if(e.target === overlay) overlay.remove(); });
+    if(onMount) onMount(overlay);
+    return overlay;
+  }
+
+  function promptModal(title, defaultValue, onSubmit){
+    const overlay = showModal(`
+      <h3>${escapeHtml(title)}</h3>
+      <input type="text" id="modalInput" value="${escapeHtml(defaultValue || "")}">
+      <div class="row" style="margin-top:14px;justify-content:flex-end;">
+        <button class="btn ghost" id="modalCancel">キャンセル</button>
+        <button class="btn primary" id="modalOk">OK</button>
+      </div>
+    `, (ov) => {
+      const input = ov.querySelector("#modalInput");
+      input.focus();
+      input.select();
+      const submit = () => { const v = input.value.trim(); ov.remove(); if(v) onSubmit(v); };
+      ov.querySelector("#modalOk").addEventListener("click", submit);
+      ov.querySelector("#modalCancel").addEventListener("click", () => ov.remove());
+      input.addEventListener("keydown", (e) => { if(e.key === "Enter") submit(); if(e.key === "Escape") ov.remove(); });
+    });
+  }
+
+  function confirmModal(message, onConfirm){
+    showModal(`
+      <p style="color:var(--text);">${escapeHtml(message)}</p>
+      <div class="row" style="justify-content:flex-end;">
+        <button class="btn ghost" id="modalCancel">キャンセル</button>
+        <button class="btn bad" id="modalOk">削除する</button>
+      </div>
+    `, (ov) => {
+      ov.querySelector("#modalOk").addEventListener("click", () => { ov.remove(); onConfirm(); });
+      ov.querySelector("#modalCancel").addEventListener("click", () => ov.remove());
+    });
+  }
+
+  function toast(msg){
+    const el = document.createElement("div");
+    el.className = "toast";
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+  }
+
+  async function copyToClipboard(text){
+    try{
+      await navigator.clipboard.writeText(text);
+      toast("コピーしました");
+    }catch(e){
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand("copy"); toast("コピーしました"); }
+      catch(e2){ toast("コピーに失敗しました"); }
+      ta.remove();
+    }
+  }
+
+  function buildPrompt(notes){
+    return `以下は学習ノートです。これを読んで、次の2つを行ってください。
+
+① この内容に最もふさわしい科目名を1つ考えてください(例:数学、世界史、化学、英単語 など)。
+② 内容の理解度を確認するための一問一答形式の問題を8〜12問作成してください。答えはできるだけ簡潔にしてください。
+
+出力は必ず次のJSON形式のみとし、それ以外の説明文や前置きは一切含めないでください。
+
+{"subject":"科目名","questions":[{"q":"問題文","a":"解答"},{"q":"問題文","a":"解答"}]}
+
+---学習ノート開始---
+${notes}
+---学習ノート終了---`;
+  }
+
+  function parseAiResult(text){
+    let jsonText = text.trim();
+    const match = jsonText.match(/\{[\s\S]*\}/);
+    if(match) jsonText = match[0];
+    const data = JSON.parse(jsonText);
+    if(!data || !Array.isArray(data.questions)) throw new Error("invalid shape");
+    const questions = data.questions
+      .filter(q => q && q.q)
+      .map(q => ({ q: String(q.q), a: String(q.a ?? "") }));
+    return { subject: data.subject ? String(data.subject).trim() : "", questions };
+  }
+
+  function findOrCreateSubject(name){
+    if(!name) return null;
+    const existing = state.subjects.find(s => s.name.trim().toLowerCase() === name.trim().toLowerCase());
+    if(existing) return existing;
+    const sub = { id: uid(), name: name.trim(), color: SUBJECT_COLORS[state.subjects.length % SUBJECT_COLORS.length] };
+    state.subjects.push(sub);
+    return sub;
+  }
+
+  // ---- render ----
+  function render(){
+    const app = document.getElementById("app");
+    if(route.view === "home") app.innerHTML = renderHome();
+    else if(route.view === "subject") app.innerHTML = renderSubject(route.id);
+    else if(route.view === "session") app.innerHTML = renderSession(route.id);
+    else if(route.view === "quiz") app.innerHTML = renderQuiz();
+    bindEvents();
+  }
+
+  function renderHome(){
+    const allDue = dueQuestions(state.questions).length;
+    const uncategorized = state.sessions.filter(s => !s.subjectId);
+    const subjectCards = state.subjects.map(sub => {
+      const sess = sessionsForSubject(sub.id);
+      const qIds = sess.map(s => s.id);
+      const qs = state.questions.filter(q => qIds.includes(q.sessionId));
+      const due = dueQuestions(qs).length;
+      return `
+        <div class="card clickable" data-nav="subject" data-id="${sub.id}">
+          <div class="card-title"><span class="subject-color" style="background:${sub.color}"></span>${escapeHtml(sub.name)}</div>
+          <div class="card-sub">${sess.length}セッション・${qs.length}問${due ? ` <span class="badge due">復習${due}</span>` : ""}</div>
+        </div>`;
+    }).join("");
+
+    const uncatCard = uncategorized.length ? `
+      <div class="card clickable" data-nav="subject" data-id="">
+        <div class="card-title">📥 未分類</div>
+        <div class="card-sub">${uncategorized.length}件のノート(AI取り込み待ち)</div>
+      </div>` : "";
+
+    return `
+      <header class="top">
+        <h1>📘 学習帳</h1>
+        <div class="row">
+          <button class="btn ghost small" data-action="export">書き出し</button>
+          <button class="btn ghost small" data-action="import">読み込み</button>
+        </div>
+      </header>
+      ${allDue > 0 ? `
+        <div class="card" style="background:rgba(124,157,255,.12);border-color:var(--accent);">
+          <div class="card-title">今日の復習: ${allDue}問</div>
+          <div class="row" style="margin-top:8px;">
+            <button class="btn primary" data-action="review-all">復習をはじめる</button>
+          </div>
+        </div>` : ""}
+      <div class="row" style="margin:4px 0 14px;">
+        <button class="btn primary" data-action="new-note">＋ 新しい学習ノート</button>
+        <button class="btn" data-action="new-subject">＋ 科目を追加</button>
+      </div>
+      <div class="grid">
+        ${subjectCards}${uncatCard}
+      </div>
+      ${state.subjects.length === 0 && uncategorized.length === 0 ? `<div class="empty">まだ何もありません。「＋ 新しい学習ノート」から始めましょう。</div>` : ""}
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
+    `;
+  }
+
+  function renderSubject(id){
+    const sub = id ? subjectById(id) : null;
+    const sessions = id ? sessionsForSubject(id) : state.sessions.filter(s => !s.subjectId);
+    const title = sub ? sub.name : "📥 未分類";
+
+    const items = sessions.length ? sessions.map(s => {
+      const qs = questionsForSession(s.id);
+      const due = dueQuestions(qs).length;
+      return `
+        <div class="card clickable" data-nav="session" data-id="${s.id}">
+          <div class="card-title">${escapeHtml(s.title)}</div>
+          <div class="card-sub">${qs.length}問${due ? ` <span class="badge due">復習${due}</span>` : ""} ・ ${s.createdAt}</div>
+        </div>`;
+    }).join("") : `<div class="empty">セッションがありません。</div>`;
+
+    return `
+      <header class="top">
+        <button class="link-back" data-nav="home">← ホーム</button>
+      </header>
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <h1 style="font-size:22px;margin:4px 0 14px;">${escapeHtml(title)}</h1>
+        ${sub ? `<button class="btn ghost small" data-action="delete-subject" data-id="${sub.id}">科目を削除</button>` : ""}
+      </div>
+      <div class="row" style="margin-bottom:14px;">
+        <button class="btn primary" data-action="new-note" data-subject="${id || ""}">＋ 新しいセッション</button>
+      </div>
+      ${items}
+    `;
+  }
+
+  function renderSession(id){
+    const s = sessionById(id);
+    if(!s) return renderHome();
+    const sub = s.subjectId ? subjectById(s.subjectId) : null;
+    const qs = questionsForSession(id);
+    const due = dueQuestions(qs).length;
+
+    const qItems = qs.length ? qs.map(q => `
+      <div class="q-item">
+        <div class="q">${escapeHtml(q.q)}</div>
+        <div class="a">${escapeHtml(q.a)}</div>
+        <div class="row" style="margin-top:6px;">
+          <span class="badge">Box ${q.box}・次回 ${fmtDate(q.dueDate)}</span>
+          <button class="btn ghost small" data-action="delete-question" data-id="${q.id}">削除</button>
+        </div>
+      </div>
+    `).join("") : `<div class="empty">まだ問題がありません。AIに読み込ませて作成しましょう。</div>`;
+
+    return `
+      <header class="top">
+        <button class="link-back" data-nav="subject" data-id="${s.subjectId || ""}">← ${sub ? escapeHtml(sub.name) : "未分類"}</button>
+      </header>
+      <input type="text" id="sessionTitle" value="${escapeHtml(s.title)}" style="font-size:20px;font-weight:700;background:transparent;border:none;padding:4px 0;margin-bottom:10px;">
+
+      <label class="field">学習ノート(範囲の内容を貼り付け)</label>
+      <textarea id="sessionNotes" placeholder="ここに教科書の内容やまとめを貼り付けてください...">${escapeHtml(s.notes)}</textarea>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btn primary" data-action="copy-prompt" data-id="${s.id}">📋 AIプロンプトをコピー</button>
+        <button class="btn" data-action="toggle-import">📥 AIの結果を取り込む</button>
+        ${qs.length ? `<button class="btn good" data-action="quiz-session" data-id="${s.id}" ${due ? "" : "disabled"}>🎯 復習する${due ? ` (${due})` : ""}</button>` : ""}
+      </div>
+
+      <div id="importArea" style="display:none;margin-top:10px;">
+        <label class="field">Claude/ChatGPT等の返答(JSON)を貼り付け</label>
+        <textarea id="importText" placeholder='{"subject":"...","questions":[{"q":"...","a":"..."}]}'></textarea>
+        <div class="row" style="margin-top:8px;">
+          <button class="btn primary" data-action="do-import" data-id="${s.id}">取り込む</button>
+        </div>
+      </div>
+
+      <details class="prompt-box">
+        <summary>プロンプトの中身を確認</summary>
+        <pre>${escapeHtml(buildPrompt(s.notes || "(ここにノート本文が入ります)"))}</pre>
+      </details>
+
+      <h3 style="margin:22px 0 8px;font-size:15px;">問題一覧 (${qs.length})</h3>
+      <div class="card">${qItems}</div>
+    `;
+  }
+
+  function renderQuiz(){
+    const { queue, index, revealed } = quizState;
+    if(!queue.length || index >= queue.length){
+      const correct = quizState.results.filter(r => r).length;
+      return `
+        <header class="top"><button class="link-back" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">← 戻る</button></header>
+        <div class="quiz-card">
+          <div class="quiz-q">おつかれさまでした！</div>
+          <div class="quiz-a">${quizState.results.length}問中 ${correct}問 正解</div>
+          <div class="row" style="justify-content:center;">
+            <button class="btn primary" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">戻る</button>
+          </div>
+        </div>`;
+    }
+    const q = queue[index];
+    const pct = Math.round((index / queue.length) * 100);
+    return `
+      <header class="top"><button class="link-back" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">← 中断して戻る</button></header>
+      <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="card-sub" style="margin-bottom:10px;">${index+1} / ${queue.length}</div>
+      <div class="quiz-card">
+        <div class="quiz-q">${escapeHtml(q.q)}</div>
+        ${revealed ? `<div class="quiz-a">${escapeHtml(q.a)}</div>` : ""}
+        <div class="row" style="justify-content:center;">
+          ${revealed ? `
+            <button class="btn bad" data-action="grade" data-correct="0">❌ わからなかった</button>
+            <button class="btn good" data-action="grade" data-correct="1">⭕ できた</button>
+          ` : `<button class="btn primary" data-action="reveal">答えを見る</button>`}
+        </div>
+      </div>
+    `;
+  }
+
+  // ---- quiz state ----
+  let quizState = { queue: [], index: 0, revealed: false, results: [], returnTo: { view: "home" } };
+
+  function startQuiz(questionList, returnTo){
+    quizState = { queue: questionList.slice(), index: 0, revealed: false, results: [], returnTo };
+    nav({ view: "quiz" });
+  }
+
+  // ---- events ----
+  function bindEvents(){
+    document.querySelectorAll("[data-nav]").forEach(el => {
+      el.addEventListener("click", () => {
+        nav({ view: el.dataset.nav, id: el.dataset.id || null });
+      });
+    });
+
+    const actionEl = (sel) => document.querySelectorAll(sel);
+
+    actionEl('[data-action="new-note"]').forEach(el => el.addEventListener("click", () => {
+      promptModal("セッション名(学習範囲)を入力してください", "無題のノート", (title) => {
+        const s = { id: uid(), subjectId: el.dataset.subject || null, title, notes: "", createdAt: todayStr() };
+        state.sessions.push(s);
+        save();
+        nav({ view: "session", id: s.id });
+      });
+    }));
+
+    actionEl('[data-action="new-subject"]').forEach(el => el.addEventListener("click", () => {
+      promptModal("科目名を入力してください", "", (name) => {
+        const sub = findOrCreateSubject(name);
+        save();
+        nav({ view: "subject", id: sub.id });
+      });
+    }));
+
+    actionEl('[data-action="delete-subject"]').forEach(el => el.addEventListener("click", () => {
+      const id = el.dataset.id;
+      confirmModal("この科目と、中のセッション・問題をすべて削除しますか？", () => {
+        const sessIds = sessionsForSubject(id).map(s => s.id);
+        state.questions = state.questions.filter(q => !sessIds.includes(q.sessionId));
+        state.sessions = state.sessions.filter(s => s.subjectId !== id);
+        state.subjects = state.subjects.filter(s => s.id !== id);
+        save();
+        nav({ view: "home" });
+      });
+    }));
+
+    actionEl('[data-action="delete-question"]').forEach(el => el.addEventListener("click", () => {
+      state.questions = state.questions.filter(q => q.id !== el.dataset.id);
+      save();
+      render();
+    }));
+
+    actionEl('[data-action="copy-prompt"]').forEach(el => el.addEventListener("click", () => {
+      const s = sessionById(el.dataset.id);
+      if(!s.notes || !s.notes.trim()){ toast("先にノートを入力してください"); return; }
+      copyToClipboard(buildPrompt(s.notes));
+    }));
+
+    actionEl('[data-action="toggle-import"]').forEach(el => el.addEventListener("click", () => {
+      const area = document.getElementById("importArea");
+      area.style.display = area.style.display === "none" ? "block" : "none";
+    }));
+
+    actionEl('[data-action="do-import"]').forEach(el => el.addEventListener("click", () => {
+      const text = document.getElementById("importText").value;
+      const s = sessionById(el.dataset.id);
+      try{
+        const result = parseAiResult(text);
+        if(!s.subjectId && result.subject){
+          const sub = findOrCreateSubject(result.subject);
+          s.subjectId = sub.id;
+        }
+        const today = todayStr();
+        result.questions.forEach(q => {
+          state.questions.push({ id: uid(), sessionId: s.id, q: q.q, a: q.a, box: 0, dueDate: today, correctCount: 0, wrongCount: 0, lastReviewed: null });
+        });
+        save();
+        toast(`${result.questions.length}問を追加しました`);
+        nav({ view: "session", id: s.id });
+      }catch(e){
+        toast("読み込みに失敗しました。JSON形式を確認してください");
+      }
+    }));
+
+    actionEl('[data-action="quiz-session"]').forEach(el => el.addEventListener("click", () => {
+      const qs = dueQuestions(questionsForSession(el.dataset.id));
+      startQuiz(qs, { view: "session", id: el.dataset.id });
+    }));
+
+    actionEl('[data-action="review-all"]').forEach(el => el.addEventListener("click", () => {
+      startQuiz(dueQuestions(state.questions), { view: "home" });
+    }));
+
+    actionEl('[data-action="reveal"]').forEach(el => el.addEventListener("click", () => {
+      quizState.revealed = true;
+      render();
+    }));
+
+    actionEl('[data-action="grade"]').forEach(el => el.addEventListener("click", () => {
+      const correct = el.dataset.correct === "1";
+      const q = quizState.queue[quizState.index];
+      const real = state.questions.find(x => x.id === q.id);
+      if(real){
+        if(correct){
+          real.box = Math.min(real.box + 1, BOX_INTERVALS.length - 1);
+          real.correctCount++;
+        } else {
+          real.box = 0;
+          real.wrongCount++;
+        }
+        real.dueDate = addDays(todayStr(), BOX_INTERVALS[real.box]);
+        real.lastReviewed = todayStr();
+      }
+      quizState.results.push(correct);
+      quizState.index++;
+      quizState.revealed = false;
+      save();
+      render();
+    }));
+
+    actionEl('[data-action="export"]').forEach(el => el.addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `study-app-backup-${todayStr()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }));
+
+    actionEl('[data-action="import"]').forEach(el => el.addEventListener("click", () => {
+      document.getElementById("importFile").click();
+    }));
+
+    const importFile = document.getElementById("importFile");
+    if(importFile){
+      importFile.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try{
+            const data = JSON.parse(reader.result);
+            confirmModal("現在のデータを上書きして読み込みますか？", () => {
+              state = { subjects: data.subjects || [], sessions: data.sessions || [], questions: data.questions || [] };
+              save();
+              nav({ view: "home" });
+            });
+          }catch(err){ toast("読み込みに失敗しました"); }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    const titleInput = document.getElementById("sessionTitle");
+    if(titleInput){
+      titleInput.addEventListener("blur", () => {
+        const s = sessionById(route.id);
+        s.title = titleInput.value || "無題のノート";
+        save();
+      });
+    }
+    const notesInput = document.getElementById("sessionNotes");
+    if(notesInput){
+      notesInput.addEventListener("blur", () => {
+        const s = sessionById(route.id);
+        s.notes = notesInput.value;
+        save();
+      });
+    }
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
