@@ -210,10 +210,11 @@
     setTimeout(() => el.remove(), 2200);
   }
 
-  async function copyToClipboard(text){
+  async function copyToClipboard(text, successMsg){
+    successMsg = successMsg || "コピーしました";
     try{
       await navigator.clipboard.writeText(text);
-      toast("コピーしました");
+      toast(successMsg);
     }catch(e){
       const ta = document.createElement("textarea");
       ta.value = text;
@@ -221,25 +222,34 @@
       ta.style.opacity = "0";
       document.body.appendChild(ta);
       ta.select();
-      try{ document.execCommand("copy"); toast("コピーしました"); }
+      try{ document.execCommand("copy"); toast(successMsg); }
       catch(e2){ toast("コピーに失敗しました"); }
       ta.remove();
     }
   }
 
   function buildPrompt(notes){
-    return `以下は学習ノートです。これを読んで、次の2つを行ってください。
-
-① この内容に最もふさわしい科目名を1つ考えてください(例:数学、世界史、化学、英単語 など)。
+    const instructions = `① この内容に最もふさわしい科目名を1つ考えてください(例:数学、世界史、化学、英単語 など)。
 ② 内容の理解度を確認するための一問一答形式の問題を8〜12問作成してください。答えはできるだけ簡潔にしてください。
 
 出力は必ず次のJSON形式のみとし、それ以外の説明文や前置きは一切含めないでください。
 
-{"subject":"科目名","questions":[{"q":"問題文","a":"解答"},{"q":"問題文","a":"解答"}]}
+{"subject":"科目名","questions":[{"q":"問題文","a":"解答"},{"q":"問題文","a":"解答"}]}`;
+
+    if(notes && notes.trim()){
+      return `以下は学習ノートです。これを読んで、次の2つを行ってください。
+
+${instructions}
 
 ---学習ノート開始---
 ${notes}
 ---学習ノート終了---`;
+    }
+    return `これから教科書やノートのページを撮った写真を添付します。その画像の内容を読んで、次の2つを行ってください。
+
+${instructions}
+
+※ 画像に写っている内容だけを使ってください。`;
   }
 
   function parseAiResult(text){
@@ -375,8 +385,9 @@ ${notes}
       </header>
       <input type="text" id="sessionTitle" value="${escapeHtml(s.title)}" style="font-size:20px;font-weight:700;background:transparent;border:none;padding:4px 0;margin-bottom:10px;">
 
-      <label class="field">学習ノート(範囲の内容を貼り付け)</label>
+      <label class="field">学習ノート(テキストを貼り付ける場合はこちら。空でもOK)</label>
       <textarea id="sessionNotes" placeholder="ここに教科書の内容やまとめを貼り付けてください...">${escapeHtml(s.notes)}</textarea>
+      <div class="card-sub" style="margin-top:4px;">※ 空のままでも大丈夫です。その場合はAIチャット側に範囲のページ写真を直接添付してください。</div>
 
       <div class="row" style="margin-top:10px;">
         <button class="btn primary" data-action="copy-prompt" data-id="${s.id}">📋 AIプロンプトをコピー</button>
@@ -394,7 +405,7 @@ ${notes}
 
       <details class="prompt-box">
         <summary>プロンプトの中身を確認</summary>
-        <pre>${escapeHtml(buildPrompt(s.notes || "(ここにノート本文が入ります)"))}</pre>
+        <pre>${escapeHtml(buildPrompt(s.notes))}</pre>
       </details>
 
       <h3 style="margin:22px 0 8px;font-size:15px;">問題一覧 (${qs.length})</h3>
@@ -490,8 +501,8 @@ ${notes}
 
     actionEl('[data-action="copy-prompt"]').forEach(el => el.addEventListener("click", () => {
       const s = sessionById(el.dataset.id);
-      if(!s.notes || !s.notes.trim()){ toast("先にノートを入力してください"); return; }
-      copyToClipboard(buildPrompt(s.notes));
+      const hasNotes = s.notes && s.notes.trim();
+      copyToClipboard(buildPrompt(s.notes), hasNotes ? "コピーしました" : "コピーしました(AIチャットに写真も添付してください)");
     }));
 
     actionEl('[data-action="toggle-import"]').forEach(el => el.addEventListener("click", () => {
