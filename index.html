@@ -79,98 +79,25 @@
   .subject-color{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;}
   .q-item{border-bottom:1px solid var(--border);padding:10px 0;}
   .q-item:last-child{border-bottom:none;}
-  .q-item .q{font-size:14px;font-weight:600;white-space:pre-wrap;}
-  .q-item .a{font-size:13px;color:var(--muted);margin-top:2px;white-space:pre-wrap;}
+  .q-item .q{font-size:14px;font-weight:600;}
+  .q-item .a{font-size:13px;color:var(--muted);margin-top:2px;}
   .toast{
     position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
     background:var(--panel2);border:1px solid var(--accent);color:var(--text);
     padding:10px 18px;border-radius:10px;font-size:13px;z-index:50;
     box-shadow:0 4px 20px rgba(0,0,0,.4);
   }
+  .quiz-card{
+    background:var(--panel);border:1px solid var(--border);border-radius:16px;
+    padding:32px 20px;text-align:center;min-height:220px;
+    display:flex;flex-direction:column;justify-content:center;gap:16px;
+  }
+  .quiz-q{font-size:19px;font-weight:600;line-height:1.5;}
+  .quiz-a{font-size:16px;color:var(--accent);line-height:1.5;white-space:pre-wrap;}
+  .progress{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin-bottom:16px;}
+  .progress-fill{height:100%;background:var(--accent2);transition:width .2s;}
   .link-back{color:var(--muted);font-size:13px;cursor:pointer;background:none;border:none;padding:4px 0;font-family:inherit;}
   .link-back:hover{color:var(--accent);}
-
-  /* ---- flashcard scene: self-contained light "paper card" deck, used by renderQuiz ---- */
-  .fc-scene{
-    --fc-bg:#eef1ee; --fc-ink:#1b2521; --fc-ink-soft:#46534c; --fc-muted:#75817a;
-    --fc-line:#d7dbd2; --fc-card-bg:#fdfcf9; --fc-card-shadow:220,224,216;
-    --fc-accent:#2f6e5c; --fc-accent-ink:#f4faf7; --fc-accent-soft:#dcebe4;
-    --fc-coral:#c24a32; --fc-coral-soft:#f3d9cd; --fc-coral-mark:#f6c6b3;
-    background:var(--fc-bg);
-    background-image:radial-gradient(circle at 1px 1px, rgba(127,139,131,0.16) 1px, transparent 0);
-    background-size:22px 22px;
-    color:var(--fc-ink);
-    border-radius:18px;
-    margin:0 -16px;
-    padding:20px 16px 26px;
-    min-height:calc(100vh - 20px);
-  }
-  @media (prefers-color-scheme: dark){
-    .fc-scene{
-      --fc-bg:#121714; --fc-ink:#e9ede9; --fc-ink-soft:#b7c1ba; --fc-muted:#7f8b83;
-      --fc-line:#2a332c; --fc-card-bg:#1b2320; --fc-card-shadow:0,0,0;
-      --fc-accent:#63bfa0; --fc-accent-ink:#0d1613; --fc-accent-soft:#223a32;
-      --fc-coral:#e2896a; --fc-coral-soft:#3a2a22; --fc-coral-mark:#4a3324;
-    }
-  }
-  .fc-scene .link-back{color:var(--fc-muted);}
-  .fc-scene .link-back:hover{color:var(--fc-accent);}
-  .fc-stats{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--fc-muted);font-variant-numeric:tabular-nums;margin:14px 0;}
-  .fc-stats b{color:var(--fc-ink);font-weight:700;}
-  .fc-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px;}
-  .fc-dot.again{background:var(--fc-coral);}
-  .fc-dot.got{background:var(--fc-accent);}
-  .fc-progress-track{flex:1;height:4px;border-radius:2px;background:var(--fc-line);overflow:hidden;}
-  .fc-progress-fill{height:100%;background:var(--fc-accent);border-radius:2px;transition:width .3s ease;}
-  .fc-deck-wrap{position:relative;min-height:400px;}
-  .fc-deck-shadow{position:absolute;inset:0;border-radius:18px;background:var(--fc-card-bg);border:1px solid var(--fc-line);}
-  .fc-deck-shadow.s2{transform:translateY(14px) scale(.94);opacity:.45;}
-  .fc-deck-shadow.s1{transform:translateY(7px) scale(.97);opacity:.7;}
-  .fc-card{position:absolute;inset:0;border-radius:18px;cursor:pointer;perspective:1400px;outline:none;}
-  .fc-card-inner{position:relative;width:100%;height:100%;border-radius:18px;transition:transform .5s cubic-bezier(.2,.8,.3,1);transform-style:preserve-3d;}
-  .fc-card.flipped .fc-card-inner{transform:rotateY(180deg);}
-  @media (prefers-reduced-motion:reduce){.fc-card-inner,.fc-progress-fill{transition:none !important;}}
-  .fc-face{
-    position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;
-    background:var(--fc-card-bg);border:1px solid var(--fc-line);
-    box-shadow:0 18px 34px -18px rgba(var(--fc-card-shadow),.55);
-    padding:22px;display:flex;flex-direction:column;overflow-y:auto;
-  }
-  .fc-tag{
-    font:600 11px/1 ui-monospace,"SF Mono",Consolas,monospace;letter-spacing:.06em;
-    color:var(--fc-muted);text-transform:uppercase;
-  }
-  .fc-face.front{align-items:flex-start;justify-content:center;text-align:left;gap:14px;}
-  .fc-term{font:500 17px/1.7 Georgia,"Iowan Old Style","Hiragino Mincho ProN",serif;text-wrap:balance;white-space:pre-wrap;}
-  .fc-term.short{font:700 42px/1.05 Georgia,"Iowan Old Style",serif;letter-spacing:-.01em;white-space:normal;}
-  .fc-sub{font:500 14px/1.4 ui-monospace,"SF Mono",Consolas,monospace;color:var(--fc-ink-soft);}
-  .fc-tap-hint{margin-top:auto;align-self:center;font-size:11.5px;color:var(--fc-muted);}
-  .fc-face.back{transform:rotateY(180deg);justify-content:flex-start;gap:12px;}
-  .fc-answer{font:500 16px/1.75 -apple-system,"Hiragino Sans","Yu Gothic",sans-serif;white-space:pre-wrap;color:var(--fc-ink);}
-  .fc-judge-row{display:flex;gap:10px;margin-top:14px;opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .2s ease,transform .2s ease;}
-  .fc-judge-row.show{opacity:1;transform:translateY(0);pointer-events:auto;}
-  .fc-judge-btn{
-    flex:1;padding:13px 10px;border-radius:12px;border:1.5px solid transparent;
-    font:700 14px/1 -apple-system,"Hiragino Sans",sans-serif;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .12s;
-  }
-  .fc-judge-btn:active{transform:scale(.97);}
-  .fc-judge-btn.again{background:var(--fc-coral-soft);color:var(--fc-coral);border-color:var(--fc-coral);}
-  .fc-judge-btn.got{background:var(--fc-accent);color:var(--fc-accent-ink);border-color:var(--fc-accent);}
-  .fc-judge-btn kbd{font:600 10px/1 ui-monospace,monospace;opacity:.6;border:1px solid currentColor;border-radius:3px;padding:1px 4px;}
-  .fc-done{
-    position:absolute;inset:0;border-radius:18px;background:var(--fc-card-bg);border:1px solid var(--fc-line);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:32px 24px;
-  }
-  .fc-done .big{font:700 22px/1.3 Georgia,serif;text-wrap:balance;color:var(--fc-ink);}
-  .fc-done .tally{display:flex;gap:18px;font-size:13px;color:var(--fc-muted);}
-  .fc-done .tally b{color:var(--fc-ink);}
-  .fc-pill-btn{
-    padding:10px 18px;border-radius:10px;border:1.5px solid var(--fc-accent);background:var(--fc-accent);
-    color:var(--fc-accent-ink);font:700 13px/1 -apple-system,"Hiragino Sans",sans-serif;cursor:pointer;
-  }
-  .fc-foot{text-align:center;font-size:11px;color:var(--fc-muted);padding-top:14px;}
-  .fc-foot kbd{font:600 10px/1 ui-monospace,monospace;border:1px solid var(--fc-line);border-radius:3px;padding:1px 4px;margin:0 1px;}
   details.prompt-box summary{cursor:pointer;color:var(--accent);font-size:13px;margin:8px 0;}
   details.prompt-box pre{
     white-space:pre-wrap;background:var(--panel2);border:1px solid var(--border);
@@ -196,311 +123,6 @@
   const STORAGE_KEY = "studyapp:data:v1";
   const SUBJECT_COLORS = ["#7c9dff","#f472b6","#4ade80","#fbbf24","#38bdf8","#c084fc","#fb923c","#34d399"];
   const BOX_INTERVALS = [1,1,2,4,9,18];
-
-  const VOCAB_DECK = {
-    subjectName: "英単語",
-    sessionTitle: "ターゲット Unit103-105 (No.1015-1044)",
-    toQA: vocabWordToQA,
-    items: [
-      { unit: 103, no: 1015, word: "complicated", phon: "kámplakèitid", kana: "カンプリケイティド", pos: "形",
-        meaning: "複雑な、込み入った", note: "⇔ simple（単純な）",
-        collocation: "a complicated relationship",
-        exEn: "There are some complicated relationships between the two nations.",
-        exJa: "その2国間にはいくつかの複雑な関係がある。" },
-      { unit: 103, no: 1016, word: "complex", phon: "kámpleks", kana: "カンプレックス", pos: "形",
-        meaning: "複雑な、入り組んだ", note: "⇔ simple（単純な）",
-        collocation: "a complex system",
-        exEn: "The country has a complex political system.",
-        exJa: "その国は複雑な政治制度を持っている。" },
-      { unit: 103, no: 1017, word: "impossible", phon: "impásəbl", kana: "インパスィブル", pos: "形",
-        meaning: "不可能な", note: "⇔ possible（可能な）",
-        collocation: "be impossible to believe",
-        exEn: "It is impossible for me to believe Jack's words.",
-        exJa: "私がジャックの言葉を信じるのは不可能だ。" },
-      { unit: 103, no: 1018, word: "unique", phon: "ju(:)ní:k", kana: "ユ（ー）ニーク", pos: "形",
-        meaning: "①独特な　②唯一の", note: "",
-        collocation: "a unique ability",
-        exEn: "She has a unique ability to speak seven languages.",
-        exJa: "彼女には7か国語を話す独特な能力がある。" },
-      { unit: 103, no: 1019, word: "mental", phon: "méntl", kana: "メントル", pos: "形",
-        meaning: "精神の、精神的な", note: "⇔ physical（身体の）",
-        collocation: "mental health",
-        exEn: "The company focuses on the mental health of its workers.",
-        exJa: "その会社は労働者の精神の健康に重点を置いている。" },
-      { unit: 103, no: 1020, word: "married", phon: "mærid", kana: "マリド", pos: "形",
-        meaning: "結婚した", note: "▶ marry（動）〜と結婚する / get married to A",
-        collocation: "be married to her",
-        exEn: "Jim has been married to her for 10 years.",
-        exJa: "ジムは10年間彼女と結婚している（彼女と結婚して10年になる）。" },
-      { unit: 103, no: 1021, word: "significant", phon: "signífikənt", kana: "スィグニフィカント", pos: "形",
-        meaning: "①重大な、重要な　②かなりの", note: "名 significance（重要性）",
-        collocation: "a significant change",
-        exEn: "We are facing a significant change in the environment.",
-        exJa: "私たちは自然環境の重大な変化に直面している。" },
-      { unit: 103, no: 1022, word: "responsible", phon: "rispánsəbl", kana: "リスパンスィブル", pos: "形",
-        meaning: "責任のある", note: "名 responsibility（責任）",
-        collocation: "be responsible for the accident",
-        exEn: "Who was responsible for the airplane accident?",
-        exJa: "だれがその飛行機事故に責任があったのか。" },
-      { unit: 103, no: 1023, word: "moral", phon: "mɔ́(:)rəl", kana: "モー（ラ）ル", pos: "形",
-        meaning: "道徳（上）の、道徳的な", note: "",
-        collocation: "a moral issue",
-        exEn: "Let's consider the moral issue of using cellphones in trains.",
-        exJa: "電車で携帯電話を使用することの道徳上の問題を考えよう。" },
-      { unit: 103, no: 1024, word: "double", phon: "dʌbl", kana: "ダブル", pos: "形",
-        meaning: "形 2倍の、二重の / 動 〜を2倍にする", note: "",
-        collocation: "double the size",
-        exEn: "This box is double the size of that one.",
-        exJa: "この箱はあの箱の2倍の大きさである。" },
-      { unit: 104, no: 1025, word: "gradually", phon: "grædʒuəli", kana: "グラヂュアリィ", pos: "副",
-        meaning: "徐々に", note: "形 gradual（徐々の）",
-        collocation: "gradually increase",
-        exEn: "The number of visitors has gradually increased in Yakushima.",
-        exJa: "屋久島では観光客が徐々に増えている。" },
-      { unit: 104, no: 1026, word: "increasingly", phon: "inkrí:siŋli", kana: "インクリースィングリィ", pos: "副",
-        meaning: "ますます", note: "形 increasing（増えつつある）",
-        collocation: "become increasingly popular",
-        exEn: "Online shopping is becoming increasingly popular.",
-        exJa: "ネットショッピングはますます人気が出ている。" },
-      { unit: 104, no: 1027, word: "directly", phon: "dərèktli", kana: "ディレクトリィ", pos: "副",
-        meaning: "直接に", note: "形 direct（直接の）⇔ indirectly（間接的に）",
-        collocation: "sell directly",
-        exEn: "The farmer sells directly to his customers.",
-        exJa: "その農場主は顧客に直接販売している。" },
-      { unit: 104, no: 1028, word: "relatively", phon: "rélətivli", kana: "レラティヴリィ", pos: "副",
-        meaning: "比較的", note: "形 relative（比較上の）",
-        collocation: "relatively easy",
-        exEn: "The English exam was relatively easy for me.",
-        exJa: "その英語の試験は私には比較的簡単だった。" },
-      { unit: 104, no: 1029, word: "mainly", phon: "méinli", kana: "メインリィ", pos: "副",
-        meaning: "主に", note: "形 main（主な）",
-        collocation: "mainly because ...",
-        exEn: "Ken went to college mainly because he wanted to study Japanese history.",
-        exJa: "ケンは主に日本史を勉強したいという理由で大学へ行った。" },
-      { unit: 104, no: 1030, word: "widely", phon: "wáidli", kana: "ワイドリィ", pos: "副",
-        meaning: "広く", note: "形 wide（広い）",
-        collocation: "be widely used",
-        exEn: "The medicine is widely used all over the world.",
-        exJa: "その薬は世界中で広く用いられている。" },
-      { unit: 104, no: 1031, word: "frequently", phon: "frí:kwəntli", kana: "フリークウェントリィ", pos: "副",
-        meaning: "頻繁に", note: "形 frequent（頻繁な）",
-        collocation: "frequently go out",
-        exEn: "Mary frequently goes out with her mother.",
-        exJa: "メアリーは頻繁にお母さんと出かける。" },
-      { unit: 104, no: 1032, word: "otherwise", phon: "áðərwàiz", kana: "アザワイズ", pos: "副",
-        meaning: "そうしないと、そうでないと", note: "",
-        collocation: "Otherwise, ...",
-        exEn: "Leave now. Otherwise, you will be late for school.",
-        exJa: "今すぐ出発しなさい。そうしないと、学校に遅れますよ。" },
-      { unit: 104, no: 1033, word: "somewhere", phon: "sʌ̀mhwɛ́ər", kana: "サムホウェア", pos: "副",
-        meaning: "どこかで（に、へ）", note: "",
-        collocation: "somewhere in London",
-        exEn: "I met the lady somewhere in London.",
-        exJa: "私はその婦人にロンドンのどこかで会った。" },
-      { unit: 104, no: 1034, word: "anywhere", phon: "énihwɛ̀ər", kana: "エニ（ホ）ウェア", pos: "副",
-        meaning: "どこでも、どこへでも", note: "疑問文では「どこかに」の意味にも",
-        collocation: "anywhere in Japan",
-        exEn: "You can use this airplane ticket anywhere in Japan.",
-        exJa: "この航空券は日本中どこでも使うことができる。" },
-      { unit: 105, no: 1035, word: "succeed", phon: "səksí:d", kana: "サクスィード", pos: "動",
-        meaning: "成功する", note: "⇔ fail（失敗する）/ 名 success（成功）",
-        collocation: "succeed in losing weight",
-        exEn: "The young boxer finally succeeded in losing weight.",
-        exJa: "その若いボクサーはやっと減量に成功した。" },
-      { unit: 105, no: 1036, word: "examine", phon: "igzǽmin", kana: "イグザミン", pos: "動",
-        meaning: "①調べる　②試験する", note: "名 examination（調査・試験）",
-        collocation: "examine what ...",
-        exEn: "The engineer examined what was wrong with the machine.",
-        exJa: "技術者はその機械のどこが悪いのかを調べた。" },
-      { unit: 105, no: 1037, word: "score", phon: "skɔːr", kana: "スコーァ", pos: "動",
-        meaning: "得点を取る、得点する", note: "名 score（得点）",
-        collocation: "score three goals",
-        exEn: "He scored three goals in today's soccer game.",
-        exJa: "彼は今日のサッカーの試合で3点を取った。" },
-      { unit: 105, no: 1038, word: "ignore", phon: "ignɔ́ːr", kana: "イグノーァ", pos: "動",
-        meaning: "〜を無視する", note: "",
-        collocation: "ignore a phone call",
-        exEn: "Lisa was so angry that she ignored his phone call.",
-        exJa: "リサはとても怒っていたので彼からの電話を無視した。" },
-      { unit: 105, no: 1039, word: "attempt", phon: "ətémpt", kana: "アテンプト", pos: "動",
-        meaning: "〜を試みる、〜しようとする", note: "名 attempt（試み）",
-        collocation: "attempt to swim",
-        exEn: "Some people attempted to swim between England and France.",
-        exJa: "英仏間を泳いで渡ろうとした人もいる。" },
-      { unit: 105, no: 1040, word: "invent", phon: "invént", kana: "インヴェント", pos: "動",
-        meaning: "〜を発明する", note: "名 invention（発明品）",
-        collocation: "invent the telephone",
-        exEn: "Alexander Graham Bell invented the telephone in 1876.",
-        exJa: "アレクサンダー・グラハム・ベルは1876年に電話を発明した。" },
-      { unit: 105, no: 1041, word: "release", phon: "rilí:s", kana: "リリース", pos: "動",
-        meaning: "①〜を解き放す、自由にする　②（危険などから）逃れる", note: "",
-        collocation: "release a bird",
-        exEn: "Andy decided to release his bird from the cage.",
-        exJa: "アンディーはかごから彼の鳥を逃がすことに決めた。" },
-      { unit: 105, no: 1042, word: "escape", phon: "iskéip", kana: "イスケイプ", pos: "動",
-        meaning: "①逃げる　②（危険などから）逃れる", note: "名 escape（脱走・逃亡）",
-        collocation: "escape from a building",
-        exEn: "All of them escaped from the burning building.",
-        exJa: "彼らはみんな燃えている建物から逃げた。" },
-      { unit: 105, no: 1043, word: "tie", phon: "tai", kana: "タイ", pos: "動",
-        meaning: "（ひもなどで）〜を結びつける", note: "名 tie（①ネクタイ　②つながり）",
-        collocation: "tie a tag to a bag",
-        exEn: "Tie your name tag to your bag before the flight.",
-        exJa: "飛行機に乗る前にあなたのバッグに名札を結びつけなさい。" },
-      { unit: 105, no: 1044, word: "conclude", phon: "kənklú:d", kana: "コンクルード", pos: "動",
-        meaning: "…であると結論づける", note: "名 conclusion（結論）",
-        collocation: "conclude (that) ...",
-        exEn: "He concluded from the report that they needed further research.",
-        exJa: "彼はそのレポートからさらなる調査が必要であると結論づけた。" },
-    ],
-  };
-
-  function vocabWordToQA(w){
-    const q = `${w.word}　/${w.phon}/ ${w.kana}`;
-    const lines = [w.meaning];
-    if(w.note) lines.push(`（${w.note}）`);
-    lines.push("");
-    lines.push(`▸ ${w.collocation}`);
-    lines.push(w.exEn);
-    lines.push(w.exJa);
-    return { q, a: lines.join("\n") };
-  }
-
-  const HISTORY_DECK = {
-    subjectName: "世界史・日本史",
-    sessionTitle: "地理歴史Ⅱ 確認問題 第9〜13回",
-    toQA: historyQToQA,
-    items: [
-      { daimon: 1, no: 1, instr: "correct",
-        stem: "18世紀後半から19世紀半ばにかけて、ヨーロッパを中心に各地で絶対王政に対して市民が蜂起し、実力で市民の自由・平等、政治的権利などを獲得する【空欄】が起こった。",
-        choices: ["民族運動", "労働運動", "産業革命", "市民革命"], answer: 3,
-        explain: "絶対王政に対して市民が武力で自由・平等・政治的権利を勝ち取った一連の出来事を市民革命と呼ぶ（ピューリタン革命・アメリカ独立革命・フランス革命など）。" },
-      { daimon: 1, no: 2, instr: "correct",
-        stem: "イギリスでは名誉革命を経てメアリ2世とウィリアム3世が即位し、王権に対する議会の優位性の主張を法文化した【空欄】が定められた。",
-        choices: ["人権宣言", "権利の章典", "独立宣言", "権利の宣言"], answer: 1,
-        explain: "1689年、議会の権利を法文化した権利の章典（Bill of Rights）が制定された。「権利の宣言」はその前段階として即位時に提示された文書。" },
-      { daimon: 1, no: 3, instr: "correct",
-        stem: "フランス革命やナポレオン戦争をきっかけに、権利や法における平等の理想が諸国へ広まった結果、民族の統一や国家の独立を目指す【空欄】の運動がさかんになった。",
-        choices: ["ナショナリズム", "バンダリズム", "民主主義", "自由主義"], answer: 0,
-        explain: "民族の統一・独立を求める思想・運動をナショナリズム（国民主義・民族主義）と呼ぶ。バンダリズムは破壊行為を指し無関係。" },
-      { daimon: 1, no: 4, instr: "correct",
-        stem: "1814〜1815年に開催された、フランス革命戦争およびナポレオン戦争の戦後処理に関する会議の結果、フランス革命以前の状態回復と勢力均衡を目指した国際秩序である【空欄】が成立した。",
-        choices: ["パリ=コミューン", "第4回対仏大同盟", "ウィーン体制", "神聖同盟"], answer: 2,
-        explain: "ウィーン会議（1814〜15年）の結果成立した国際秩序をウィーン体制という。神聖同盟はこの体制を支えた列強間の同盟の一つ。" },
-      { daimon: 1, no: 5, instr: "correct",
-        stem: "19世紀のヨーロッパでは、資本主義の害悪を是正する対抗理論として社会主義（共産主義）の思想が登場した。【空欄】は仲間とともに『共産党宣言』を出版して社会革命の必要を説き、さらに『資本論』において資本家による労働者の搾取のメカニズムを解明した。",
-        choices: ["エンゲルス", "フィヒテ", "マルクス", "ビスマルク"], answer: 2,
-        explain: "マルクスはエンゲルスとともに『共産党宣言』を発表し、単独で『資本論』を著した。" },
-      { daimon: 1, no: 6, instr: "correct",
-        stem: "オーストリアによる支配が続く地域を中心に統一への動きが高まり、各地が併合されるなどして1861年には【空欄】王国が成立した。さらなる併合・占領を続けた一方で、オーストリア領のままとなった地域は「未回収の【空欄】」と呼ばれた。※2つの【空欄】には同じ語句が入る。",
-        choices: ["トリエステ", "サルデーニャ", "イタリア", "ドイツ"], answer: 2,
-        explain: "1861年にサルデーニャ王国を中心にイタリア王国が成立した。オーストリア領に残った未統一地域は「未回収のイタリア」と呼ばれた。" },
-      { daimon: 1, no: 7, instr: "correct",
-        stem: "1868年の【空欄】によって、広く意見を取り入れる政治という新政府の方針が示された。",
-        choices: ["五箇条の御誓文", "王政復古の大号令", "五榜の掲示", "大政奉還"], answer: 0,
-        explain: "五箇条の御誓文（1868年）は「広く会議を興し万機公論に決すべし」など新政府の基本方針を示した。" },
-      { daimon: 1, no: 8, instr: "correct",
-        stem: "新政府は欧米諸国に追いつき対等な関係を築くため、地租改正など【空欄】の改革を行った。",
-        choices: ["殖産興業", "文明開化", "明治維新", "富国強兵"], answer: 3,
-        explain: "地租改正は安定した財源を確保するための改革で、富国強兵政策を支える財政基盤となった。" },
-      { daimon: 1, no: 9, instr: "correct",
-        stem: "第2次産業革命により、原料・燃料の供給地や商品の輸出市場としての植民地の重要性が見直された。その結果、新たな植民地を求め非ヨーロッパ世界へ進出する【空欄】の動きが強まった。",
-        choices: ["列強主義", "帝国主義", "共産主義", "植民地主義"], answer: 1,
-        explain: "列強が資源・市場を求めてアジア・アフリカ等へ進出する動きを帝国主義という。" },
-      { daimon: 1, no: 10, instr: "correct",
-        stem: "1902年、日本はロシアの勢力拡大に対抗して、同じくロシアを脅威に感じていた【空欄】と同盟を結んだ。",
-        choices: ["清朝", "イギリス", "フランス", "アメリカ"], answer: 1,
-        explain: "1902年に日英同盟が締結された。" },
-      { daimon: 2, no: 1, instr: "correct",
-        stem: "市民革命に関して、以下の選択肢のうち正しいものはどれか。",
-        choices: [
-          "ジェントリなどの新興層に独占権が与えられたことで貴族や大商人が不満を持ち、ピューリタン革命が起こった。",
-          "革命以前のフランスでは身分制がしかれ、第一身分（聖職者）のみ免税の特権が認められた。",
-          "アメリカ独立戦争の結果成立したアメリカ合衆国では、奴隷や先住民を含めたすべての人民の主権による共和政が定められた。",
-          "フランス革命では民衆の支持のもと、ジャコバン派のロベスピエールによる独裁が行われた。",
-        ], answer: 3,
-        explain: "エが正しい。アは独占権を得た層と不満を持った層の関係が逆。イはフランスでは第一身分（聖職者）だけでなく第二身分（貴族）も免税特権を持っていた。ウは奴隷や先住民は主権の対象に含まれていなかった。" },
-      { daimon: 2, no: 2, instr: "correct",
-        stem: "ナポレオン時代のヨーロッパについて、以下の選択肢のうち正しいものはどれか。",
-        choices: [
-          "1806年の大陸封鎖令によって、ヨーロッパの大陸諸国との貿易が全面禁止されたことで、イギリスは大打撃を受けた。",
-          "ナポレオンによる征服の結果、農民開放による農奴制廃止などのプロイセン改革が行われた。",
-          "フランス・スペイン連合艦隊が派遣され、トラファルガーの海戦でイギリス艦隊を撃破した。",
-          "度重なる対外戦争での敗北の責任を負ったナポレオンは、1814年に退位しセントヘレナ島に流刑となったが、のちに島を脱出し再びパリに入った。",
-        ], answer: 1,
-        explain: "イが正しい（シュタイン・ハルデンベルクによるプロイセン改革）。アは大陸封鎖令がイギリスに致命的打撃を与えたとは言えない。ウはトラファルガーの海戦では逆にイギリス艦隊が仏西連合艦隊を撃破した。エの1814年の流刑先はセントヘレナ島ではなくエルバ島（セントヘレナ島への流刑はワーテルローの戦い後の1815年）。" },
-      { daimon: 2, no: 3, instr: "correct",
-        stem: "ウィーン体制崩壊後のヨーロッパについて、次の選択肢から正しいものはどれか。",
-        choices: [
-          "南下政策のもと1853年にクリミア戦争を仕掛けたロシアは、戦争に勝利し黒海を獲得した。",
-          "ナポレオン3世が統治を行った第二帝政の時期に、下水道整備や放射状の道の敷設が行われ、現在に至るパリの街並みの原型が成立した。",
-          "19世紀半ば以降のイギリスは、エリザベス女王の治世に繁栄の絶頂期を迎えた。",
-          "ロシアでは皇帝アレクサンドル2世のもと、インテリゲンツィアが主導するかたちで農奴解放令の改革が行われた。",
-        ], answer: 1,
-        explain: "イが正しい（パリ改造）。アはロシアはクリミア戦争に敗北している。ウは19世紀の繁栄はヴィクトリア女王の治世であり、エリザベス女王（16世紀）ではない。エの農奴解放令は皇帝主導の「上からの改革」であり、インテリゲンツィア主導ではない。" },
-      { daimon: 2, no: 4, instr: "wrong",
-        stem: "南北戦争について、以下の選択肢のうち間違っているものはどれか。",
-        choices: [
-          "工業化が進んでいた北部と、奴隷制に基づく南部のように、経済構造が南北で異なっていた。",
-          "奴隷制存続を望む南部の州が合衆国から離脱し、アメリカ連合国（南部連合）を結成した。",
-          "奴隷制に反対する派閥が民主党を結成し、1860年にリンカンを大統領に当選させた。",
-          "大陸横断鉄道が開通したことで農業や工業が一層発達し、アメリカの発展につながった。",
-        ], answer: 2,
-        explain: "ウが誤り。奴隷制に反対しリンカンを大統領に当選させたのは共和党であり、民主党ではない。他の記述はすべて正しい。" },
-      { daimon: 3, no: 1, instr: "correct",
-        stem: "1889年2月11日に大日本帝国憲法（明治憲法）が公布された。この憲法について正しい説明はどれか。",
-        choices: [
-          "各地で起草された憲法の私案（私擬憲法）に基づいて制定された",
-          "内閣総理大臣が国民に授ける欽定憲法の形式がとられた",
-          "天皇の強大な権限も定めたが、陸海軍の統帥権については内閣のみ関与することができた",
-          "不平等条約改正のため、欧米水準の法典の整備が進められたことで制定に至った",
-        ], answer: 3,
-        explain: "エが正しい。条約改正交渉を有利に進めるため、欧米水準の法典整備の一環として制定された。アは私擬憲法ではなくプロイセン型の憲法を模範とした。イは天皇が国民に授ける欽定憲法であり、内閣総理大臣が授けたのではない。ウの陸海軍の統帥権は内閣ではなく天皇に直属する「統帥権の独立」が特徴。" },
-      { daimon: 3, no: 2, instr: "correct",
-        stem: "日清戦争に勝利した日本は1895年に下関条約を結び、遼東半島などの割譲や多額の賠償金を得たが、【空欄】の三国干渉によって遼東半島を清朝に返還した。",
-        choices: ["ロシア・フランス・ドイツ", "ロシア・フランス・アメリカ", "イギリス・アメリカ・ドイツ", "イギリス・朝鮮・清朝"], answer: 0,
-        explain: "1895年の三国干渉はロシア・フランス・ドイツの3か国による。" },
-    ],
-  };
-
-  function historyQToQA(item){
-    const LETTERS = ["ア", "イ", "ウ", "エ"];
-    const instrLabel = item.instr === "wrong" ? "（間違っているものを選べ）" : "（正しいものを選べ）";
-    const q = `【大問${item.daimon} 問${item.no}】${instrLabel}\n${item.stem}\n${item.choices.map((c, i) => `${LETTERS[i]}　${c}`).join("\n")}`;
-    const a = `正解：${LETTERS[item.answer]}　${item.choices[item.answer]}\n\n${item.explain}`;
-    return { q, a };
-  }
-
-  const CALC_DECK = {
-    subjectName: "数学(微分)",
-    sessionTitle: "三角・対数・指数・逆三角関数の導関数",
-    toQA: calcFnToQA,
-    items: [
-      { group: "三角関数", func: "sin x", deriv: "cos x", note: "" },
-      { group: "三角関数", func: "cos x", deriv: "-sin x", note: "" },
-      { group: "三角関数", func: "tan x", deriv: "1/cos²x", note: "= sec²x = 1+tan²x とも書ける。" },
-      { group: "三角関数", func: "cot x", deriv: "-1/sin²x", note: "= -csc²x = -(1+cot²x) とも書ける。" },
-      { group: "三角関数", func: "sec x", deriv: "sec x・tan x", note: "" },
-      { group: "三角関数", func: "csc x", deriv: "-csc x・cot x", note: "" },
-      { group: "対数関数", func: "log x", deriv: "1/x", note: "log x は自然対数 logₑx（= ln x）のこと。log|x| の導関数も同じく 1/x。" },
-      { group: "対数関数", func: "log_a x", deriv: "1/(x・log a)", note: "log a は a の自然対数。底の変換公式 log_a x = log x / log a から導ける。" },
-      { group: "指数関数", func: "e^x", deriv: "e^x", note: "微分しても形が変わらない唯一の関数（e の定義そのもの）。" },
-      { group: "指数関数", func: "a^x", deriv: "a^x・log a", note: "a^x = e^(x・log a) と変形し、合成関数の微分から導ける。" },
-      { group: "逆三角関数", func: "sin⁻¹x", deriv: "1/√(1-x²)", note: "Arcsin x とも書く。定義域 -1<x<1、値域 -π/2<y<π/2。" },
-      { group: "逆三角関数", func: "cos⁻¹x", deriv: "-1/√(1-x²)", note: "Arccos x とも書く。定義域 -1<x<1、値域 0<y<π。" },
-      { group: "逆三角関数", func: "tan⁻¹x", deriv: "1/(1+x²)", note: "Arctan x とも書く。値域 -π/2<y<π/2。" },
-      { group: "逆三角関数", func: "cot⁻¹x", deriv: "-1/(1+x²)", note: "Arccot x とも書く。値域 0<y<π。" },
-      { group: "逆三角関数", func: "sec⁻¹x", deriv: "1/(|x|√(x²-1))", note: "Arcsec x とも書く。|x|≥1。" },
-      { group: "逆三角関数", func: "csc⁻¹x", deriv: "-1/(|x|√(x²-1))", note: "Arccsc x とも書く。|x|≥1。" },
-    ],
-  };
-
-  function calcFnToQA(item){
-    const q = `(${item.func})′`;
-    const lines = [`= ${item.deriv}`];
-    if(item.note){ lines.push(""); lines.push(item.note); }
-    return { q, a: lines.join("\n") };
-  }
 
   function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
   function formatLocalDate(d){
@@ -846,27 +468,6 @@ ${instructions}
     return sub;
   }
 
-  function seedDeck(deck){
-    const sub = findOrCreateSubject(deck.subjectName);
-    const existing = state.sessions.find(s => s.subjectId === sub.id && s.title === deck.sessionTitle);
-    if(existing){
-      save();
-      toast("すでに追加されています");
-      nav({ view: "session", id: existing.id });
-      return;
-    }
-    const session = { id: uid(), subjectId: sub.id, title: deck.sessionTitle, notes: "", createdAt: todayStr() };
-    state.sessions.push(session);
-    const today = todayStr();
-    deck.items.forEach(item => {
-      const { q, a } = deck.toQA(item);
-      state.questions.push({ id: uid(), sessionId: session.id, q, a, box: 0, dueDate: today, correctCount: 0, wrongCount: 0, lastReviewed: null });
-    });
-    save();
-    toast(`${deck.items.length}問を追加しました`);
-    nav({ view: "session", id: session.id });
-  }
-
   // ---- render ----
   function render(){
     const app = document.getElementById("app");
@@ -880,9 +481,6 @@ ${instructions}
   function renderHome(){
     const allDue = dueQuestions(state.questions).length;
     const uncategorized = state.sessions.filter(s => !s.subjectId);
-    const vocabDeckAdded = state.sessions.some(s => s.title === VOCAB_DECK.sessionTitle);
-    const historyDeckAdded = state.sessions.some(s => s.title === HISTORY_DECK.sessionTitle);
-    const calcDeckAdded = state.sessions.some(s => s.title === CALC_DECK.sessionTitle);
     const subjectCards = state.subjects.map(sub => {
       const sess = sessionsForSubject(sub.id);
       const qIds = sess.map(s => s.id);
@@ -928,9 +526,6 @@ ${instructions}
       <div class="row" style="margin:4px 0 14px;">
         <button class="btn primary" data-action="new-note">＋ 新しい学習ノート</button>
         <button class="btn" data-action="new-subject">＋ 科目を追加</button>
-        ${vocabDeckAdded ? "" : `<button class="btn" data-action="seed-vocab">📇 英単語Unit103-105を追加</button>`}
-        ${historyDeckAdded ? "" : `<button class="btn" data-action="seed-history">🏛️ 世界史・日本史セットを追加</button>`}
-        ${calcDeckAdded ? "" : `<button class="btn" data-action="seed-calc">∫ 微分公式セットを追加</button>`}
       </div>
       <div class="grid">
         ${subjectCards}${uncatCard}
@@ -1024,81 +619,42 @@ ${instructions}
 
   function renderQuiz(){
     const { queue, index, revealed } = quizState;
-    const label = quizState.label || "復習";
-
     if(!queue.length || index >= queue.length){
-      const total = quizState.results.length;
       const correct = quizState.results.filter(r => r).length;
       return `
-        <div class="fc-scene">
-          <header class="top" style="background:transparent;position:static;padding:2px 4px 0;">
-            <button class="link-back" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">← 戻る</button>
-          </header>
-          <div class="fc-deck-wrap">
-            <div class="fc-done">
-              <div class="big">${total ? "このセットは終わりです" : "復習する問題はありません"}</div>
-              ${total ? `<div class="tally"><span>覚えた <b>${correct}</b></span><span>もう一度 <b>${total - correct}</b></span></div>` : ""}
-              <button class="fc-pill-btn" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">戻る</button>
-            </div>
+        <header class="top"><button class="link-back" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">← 戻る</button></header>
+        <div class="quiz-card">
+          <div class="quiz-q">おつかれさまでした！</div>
+          <div class="quiz-a">${quizState.results.length}問中 ${correct}問 正解</div>
+          <div class="row" style="justify-content:center;">
+            <button class="btn primary" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">戻る</button>
           </div>
         </div>`;
     }
-
     const q = queue[index];
-    const gotCount = quizState.results.filter(r => r).length;
-    const againCount = quizState.results.filter(r => !r).length;
     const pct = Math.round((index / queue.length) * 100);
-
-    // vocab-style entries encode "word　/phonetic/ kana" on one line; split that out for
-    // the front face, otherwise just show the raw question text (works for any subject).
-    const m = q.q.match(/^(.+?)　(\/.+)$/);
-    const term = m ? m[1] : q.q;
-    const sub = m ? m[2] : "";
-    const isShort = m ? true : q.q.length <= 24;
-
     return `
-      <div class="fc-scene">
-        <header class="top" style="background:transparent;position:static;padding:2px 4px 0;">
-          <button class="link-back" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">← 中断して戻る</button>
-        </header>
-        <div class="fc-stats">
-          <span><span class="fc-dot got"></span><b>${gotCount}</b> 覚えた</span>
-          <span><span class="fc-dot again"></span><b>${againCount}</b> もう一度</span>
-          <div class="fc-progress-track"><div class="fc-progress-fill" style="width:${pct}%"></div></div>
-          <span>${index + 1} / ${queue.length}</span>
+      <header class="top"><button class="link-back" data-nav="${quizState.returnTo.view}" data-id="${quizState.returnTo.id || ""}">← 中断して戻る</button></header>
+      <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="card-sub" style="margin-bottom:10px;">${index+1} / ${queue.length}</div>
+      <div class="quiz-card">
+        <div class="quiz-q">${escapeHtml(q.q)}</div>
+        ${revealed ? `<div class="quiz-a">${escapeHtml(q.a)}</div>` : ""}
+        <div class="row" style="justify-content:center;">
+          ${revealed ? `
+            <button class="btn bad" data-action="grade" data-correct="0">❌ わからなかった</button>
+            <button class="btn good" data-action="grade" data-correct="1">⭕ できた</button>
+          ` : `<button class="btn primary" data-action="reveal">答えを見る</button>`}
         </div>
-        <div class="fc-deck-wrap">
-          <div class="fc-deck-shadow s2"></div>
-          <div class="fc-deck-shadow s1"></div>
-          <div class="fc-card ${revealed ? "flipped" : ""}" id="fcCard" tabindex="0" role="button" aria-label="カードをめくる">
-            <div class="fc-card-inner">
-              <div class="fc-face front">
-                <div class="fc-tag">${escapeHtml(label)}</div>
-                <div class="fc-term ${isShort ? "short" : ""}">${escapeHtml(term)}</div>
-                ${sub ? `<div class="fc-sub">${escapeHtml(sub)}</div>` : ""}
-                <div class="fc-tap-hint">タップして答えを見る</div>
-              </div>
-              <div class="fc-face back">
-                <div class="fc-tag">${escapeHtml(label)}</div>
-                <div class="fc-answer">${escapeHtml(q.a)}</div>
-                <div class="fc-judge-row ${revealed ? "show" : ""}">
-                  <button class="fc-judge-btn again" data-action="grade" data-correct="0">もう一度 <kbd>1</kbd></button>
-                  <button class="fc-judge-btn got" data-action="grade" data-correct="1">覚えた <kbd>2</kbd></button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="fc-foot"><kbd>Space</kbd> めくる &nbsp; <kbd>1</kbd>/<kbd>2</kbd> 判定</div>
       </div>
     `;
   }
 
   // ---- quiz state ----
-  let quizState = { queue: [], index: 0, revealed: false, results: [], returnTo: { view: "home" }, label: "" };
+  let quizState = { queue: [], index: 0, revealed: false, results: [], returnTo: { view: "home" } };
 
-  function startQuiz(questionList, returnTo, label){
-    quizState = { queue: questionList.slice(), index: 0, revealed: false, results: [], returnTo, label: label || "復習" };
+  function startQuiz(questionList, returnTo){
+    quizState = { queue: questionList.slice(), index: 0, revealed: false, results: [], returnTo };
     nav({ view: "quiz" });
   }
 
@@ -1128,10 +684,6 @@ ${instructions}
         nav({ view: "subject", id: sub.id });
       });
     }));
-
-    actionEl('[data-action="seed-vocab"]').forEach(el => el.addEventListener("click", () => seedDeck(VOCAB_DECK)));
-    actionEl('[data-action="seed-history"]').forEach(el => el.addEventListener("click", () => seedDeck(HISTORY_DECK)));
-    actionEl('[data-action="seed-calc"]').forEach(el => el.addEventListener("click", () => seedDeck(CALC_DECK)));
 
     actionEl('[data-action="delete-subject"]').forEach(el => el.addEventListener("click", () => {
       const id = el.dataset.id;
@@ -1185,24 +737,19 @@ ${instructions}
 
     actionEl('[data-action="quiz-session"]').forEach(el => el.addEventListener("click", () => {
       const qs = dueQuestions(questionsForSession(el.dataset.id));
-      const s = sessionById(el.dataset.id);
-      startQuiz(qs, { view: "session", id: el.dataset.id }, s ? s.title : "復習");
+      startQuiz(qs, { view: "session", id: el.dataset.id });
     }));
 
     actionEl('[data-action="review-all"]').forEach(el => el.addEventListener("click", () => {
-      startQuiz(dueQuestions(state.questions), { view: "home" }, "全科目 復習");
+      startQuiz(dueQuestions(state.questions), { view: "home" });
     }));
 
-    const fcCard = document.getElementById("fcCard");
-    if(fcCard){
-      fcCard.addEventListener("click", () => { quizState.revealed = !quizState.revealed; render(); });
-      fcCard.addEventListener("keydown", (e) => {
-        if(e.key === " " || e.key === "Enter"){ e.preventDefault(); quizState.revealed = !quizState.revealed; render(); }
-      });
-    }
+    actionEl('[data-action="reveal"]').forEach(el => el.addEventListener("click", () => {
+      quizState.revealed = true;
+      render();
+    }));
 
-    actionEl('[data-action="grade"]').forEach(el => el.addEventListener("click", (e) => {
-      e.stopPropagation();
+    actionEl('[data-action="grade"]').forEach(el => el.addEventListener("click", () => {
       const correct = el.dataset.correct === "1";
       const q = quizState.queue[quizState.index];
       const real = state.questions.find(x => x.id === q.id);
@@ -1279,16 +826,6 @@ ${instructions}
       });
     }
   }
-
-  document.addEventListener("keydown", (e) => {
-    if(route.view !== "quiz" || document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") return;
-    const { queue, index, revealed } = quizState;
-    if(index >= queue.length) return;
-    if(e.key === " "){ e.preventDefault(); quizState.revealed = !quizState.revealed; render(); }
-    else if(revealed && (e.key === "1" || e.key === "2")){
-      document.querySelector(`[data-action="grade"][data-correct="${e.key === "2" ? "1" : "0"}"]`)?.click();
-    }
-  });
 
   const driveCached = driveLoadCachedToken();
   if(driveCached){ driveAccessToken = driveCached; driveStatusMsg = "ログイン済み"; }
