@@ -732,10 +732,69 @@
     };
   }
 
+  /* ===================== deck: 熟語（Lesson3-4） ===================== */
+  const PHRASE_GROUPS = [
+    { id: "L3S1", label: "Lesson3-1", color: "#2f6e5c" },
+    { id: "L3S2", label: "Lesson3-2", color: "#a9762f" },
+    { id: "L3S3", label: "Lesson3-3", color: "#4a7fc2" },
+    { id: "L4S1", label: "Lesson4-1", color: "#c24a32" },
+    { id: "L4S2", label: "Lesson4-2", color: "#7a4fb0" },
+    { id: "L4S3", label: "Lesson4-3", color: "#3f8f7a" },
+  ];
+  const PHRASE_ITEMS = [
+    { group: "L3S1", phrase: "be engaged in ~", meaning: "~に従事する" },
+    { group: "L3S1", phrase: "for a long time", meaning: "長期にわたって" },
+    { group: "L3S1", phrase: "sympathize with ~", meaning: "~に共感する" },
+    { group: "L3S1", phrase: "social media", meaning: "ソーシャル・メディア（SNSの略も含む）" },
+    { group: "L3S1", phrase: "soon after ~", meaning: "~の後すぐに" },
+    { group: "L3S1", phrase: "once again", meaning: "もう一度" },
+
+    { group: "L3S2", phrase: "distribute ~ to …", meaning: "~を…に配布する" },
+    { group: "L3S2", phrase: "a sense of ~", meaning: "~の感覚" },
+    { group: "L3S2", phrase: "get accustomed to ~", meaning: "~に慣れる" },
+
+    { group: "L3S3", phrase: "developing countries", meaning: "開発途上国" },
+    { group: "L3S3", phrase: "child labor", meaning: "児童労働" },
+    { group: "L3S3", phrase: "fair-trade products", meaning: "フェアトレード製品" },
+    { group: "L3S3", phrase: "felt", meaning: "フェルト製の" },
+
+    { group: "L4S1", phrase: "ready for ~", meaning: "~の用意ができて" },
+    { group: "L4S1", phrase: "make sure ~", meaning: "~を確かめる" },
+    { group: "L4S1", phrase: "be expected to ~", meaning: "~する見通しである" },
+    { group: "L4S1", phrase: "cabin attendant", meaning: "客室乗務員" },
+    { group: "L4S1", phrase: "Certainly.", meaning: "承知しました。" },
+    { group: "L4S1", phrase: "~ degrees Fahrenheit", meaning: "華氏~度" },
+    { group: "L4S1", phrase: "Kiitos", meaning: "（フィンランド語で）ありがとう" },
+
+    { group: "L4S2", phrase: "Rovaniemi", meaning: "ロヴァニエミ（フィンランド北部の都市）" },
+    { group: "L4S2", phrase: "Santa Claus", meaning: "サンタクロース" },
+    { group: "L4S2", phrase: "Korvatunturi", meaning: "コルヴァトゥントゥリ" },
+    { group: "L4S2", phrase: "throughout the world", meaning: "世界じゅうに" },
+    { group: "L4S2", phrase: "on the border of ~", meaning: "~の縁に" },
+    { group: "L4S2", phrase: "the Arctic Circle", meaning: "北極圏" },
+
+    { group: "L4S3", phrase: "all over ~", meaning: "~のいたるところで" },
+    { group: "L4S3", phrase: "as well as …", meaning: "…だけでなく…も" },
+    { group: "L4S3", phrase: "as ~ as possible", meaning: "できるだけ~" },
+    { group: "L4S3", phrase: "at the bottom of ~", meaning: "~の下に" },
+    { group: "L4S3", phrase: "that is", meaning: "つまり" },
+  ];
+
+  function buildPhraseCard(item, index) {
+    const frontBody = `<div class="term">${esc(item.phrase)}</div>`;
+    const backBody = `<div class="meaning">${esc(item.meaning)}</div>`;
+    const groupMeta = PHRASE_GROUPS.find((g) => g.id === item.group);
+    return {
+      id: `phrase-${index}`, groupId: item.group, label: groupMeta.label, tag: "",
+      frontBody, backBody, groupLabel: groupMeta.label, groupColor: groupMeta.color,
+    };
+  }
+
   /* ===================== deck registry ===================== */
   const DECKS = [
     { id: "vocab", label: "英単語（ターゲット）", groups: VOCAB_UNITS, cards: VOCAB_WORDS.map(buildVocabCard) },
     { id: "lessonvocab", label: "英単語（L3-4）", groups: LESSON_VOCAB_GROUPS, cards: LESSON_VOCAB_ITEMS.map(buildLessonVocabCard) },
+    { id: "phrase", label: "熟語（L3-4）", groups: PHRASE_GROUPS, cards: PHRASE_ITEMS.map(buildPhraseCard) },
     { id: "history", label: "世界史・日本史", groups: HISTORY_GROUPS, cards: HISTORY_ITEMS.map(buildHistoryCard) },
     { id: "calc", label: "微分公式", groups: CALC_GROUPS, cards: CALC_ITEMS.map(buildCalcCard) },
   ];
