@@ -471,6 +471,37 @@
     return { q, a };
   }
 
+  const CALC_DECK = {
+    subjectName: "数学(微分)",
+    sessionTitle: "三角・対数・指数・逆三角関数の導関数",
+    toQA: calcFnToQA,
+    items: [
+      { group: "三角関数", func: "sin x", deriv: "cos x", note: "" },
+      { group: "三角関数", func: "cos x", deriv: "-sin x", note: "" },
+      { group: "三角関数", func: "tan x", deriv: "1/cos²x", note: "= sec²x = 1+tan²x とも書ける。" },
+      { group: "三角関数", func: "cot x", deriv: "-1/sin²x", note: "= -csc²x = -(1+cot²x) とも書ける。" },
+      { group: "三角関数", func: "sec x", deriv: "sec x・tan x", note: "" },
+      { group: "三角関数", func: "csc x", deriv: "-csc x・cot x", note: "" },
+      { group: "対数関数", func: "log x", deriv: "1/x", note: "log x は自然対数 logₑx（= ln x）のこと。log|x| の導関数も同じく 1/x。" },
+      { group: "対数関数", func: "log_a x", deriv: "1/(x・log a)", note: "log a は a の自然対数。底の変換公式 log_a x = log x / log a から導ける。" },
+      { group: "指数関数", func: "e^x", deriv: "e^x", note: "微分しても形が変わらない唯一の関数（e の定義そのもの）。" },
+      { group: "指数関数", func: "a^x", deriv: "a^x・log a", note: "a^x = e^(x・log a) と変形し、合成関数の微分から導ける。" },
+      { group: "逆三角関数", func: "sin⁻¹x", deriv: "1/√(1-x²)", note: "Arcsin x とも書く。定義域 -1<x<1、値域 -π/2<y<π/2。" },
+      { group: "逆三角関数", func: "cos⁻¹x", deriv: "-1/√(1-x²)", note: "Arccos x とも書く。定義域 -1<x<1、値域 0<y<π。" },
+      { group: "逆三角関数", func: "tan⁻¹x", deriv: "1/(1+x²)", note: "Arctan x とも書く。値域 -π/2<y<π/2。" },
+      { group: "逆三角関数", func: "cot⁻¹x", deriv: "-1/(1+x²)", note: "Arccot x とも書く。値域 0<y<π。" },
+      { group: "逆三角関数", func: "sec⁻¹x", deriv: "1/(|x|√(x²-1))", note: "Arcsec x とも書く。|x|≥1。" },
+      { group: "逆三角関数", func: "csc⁻¹x", deriv: "-1/(|x|√(x²-1))", note: "Arccsc x とも書く。|x|≥1。" },
+    ],
+  };
+
+  function calcFnToQA(item){
+    const q = `(${item.func})′`;
+    const lines = [`= ${item.deriv}`];
+    if(item.note){ lines.push(""); lines.push(item.note); }
+    return { q, a: lines.join("\n") };
+  }
+
   function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
   function formatLocalDate(d){
     const y = d.getFullYear();
@@ -851,6 +882,7 @@ ${instructions}
     const uncategorized = state.sessions.filter(s => !s.subjectId);
     const vocabDeckAdded = state.sessions.some(s => s.title === VOCAB_DECK.sessionTitle);
     const historyDeckAdded = state.sessions.some(s => s.title === HISTORY_DECK.sessionTitle);
+    const calcDeckAdded = state.sessions.some(s => s.title === CALC_DECK.sessionTitle);
     const subjectCards = state.subjects.map(sub => {
       const sess = sessionsForSubject(sub.id);
       const qIds = sess.map(s => s.id);
@@ -898,6 +930,7 @@ ${instructions}
         <button class="btn" data-action="new-subject">＋ 科目を追加</button>
         ${vocabDeckAdded ? "" : `<button class="btn" data-action="seed-vocab">📇 英単語Unit103-105を追加</button>`}
         ${historyDeckAdded ? "" : `<button class="btn" data-action="seed-history">🏛️ 世界史・日本史セットを追加</button>`}
+        ${calcDeckAdded ? "" : `<button class="btn" data-action="seed-calc">∫ 微分公式セットを追加</button>`}
       </div>
       <div class="grid">
         ${subjectCards}${uncatCard}
@@ -1098,6 +1131,7 @@ ${instructions}
 
     actionEl('[data-action="seed-vocab"]').forEach(el => el.addEventListener("click", () => seedDeck(VOCAB_DECK)));
     actionEl('[data-action="seed-history"]').forEach(el => el.addEventListener("click", () => seedDeck(HISTORY_DECK)));
+    actionEl('[data-action="seed-calc"]').forEach(el => el.addEventListener("click", () => seedDeck(CALC_DECK)));
 
     actionEl('[data-action="delete-subject"]').forEach(el => el.addEventListener("click", () => {
       const id = el.dataset.id;
