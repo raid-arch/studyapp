@@ -124,6 +124,174 @@
   const SUBJECT_COLORS = ["#7c9dff","#f472b6","#4ade80","#fbbf24","#38bdf8","#c084fc","#fb923c","#34d399"];
   const BOX_INTERVALS = [1,1,2,4,9,18];
 
+  const VOCAB_DECK = {
+    subjectName: "英単語",
+    sessionTitle: "ターゲット Unit103-105 (No.1015-1044)",
+    words: [
+      { unit: 103, no: 1015, word: "complicated", phon: "kámplakèitid", kana: "カンプリケイティド", pos: "形",
+        meaning: "複雑な、込み入った", note: "⇔ simple（単純な）",
+        collocation: "a complicated relationship",
+        exEn: "There are some complicated relationships between the two nations.",
+        exJa: "その2国間にはいくつかの複雑な関係がある。" },
+      { unit: 103, no: 1016, word: "complex", phon: "kámpleks", kana: "カンプレックス", pos: "形",
+        meaning: "複雑な、入り組んだ", note: "⇔ simple（単純な）",
+        collocation: "a complex system",
+        exEn: "The country has a complex political system.",
+        exJa: "その国は複雑な政治制度を持っている。" },
+      { unit: 103, no: 1017, word: "impossible", phon: "impásəbl", kana: "インパスィブル", pos: "形",
+        meaning: "不可能な", note: "⇔ possible（可能な）",
+        collocation: "be impossible to believe",
+        exEn: "It is impossible for me to believe Jack's words.",
+        exJa: "私がジャックの言葉を信じるのは不可能だ。" },
+      { unit: 103, no: 1018, word: "unique", phon: "ju(:)ní:k", kana: "ユ（ー）ニーク", pos: "形",
+        meaning: "①独特な　②唯一の", note: "",
+        collocation: "a unique ability",
+        exEn: "She has a unique ability to speak seven languages.",
+        exJa: "彼女には7か国語を話す独特な能力がある。" },
+      { unit: 103, no: 1019, word: "mental", phon: "méntl", kana: "メントル", pos: "形",
+        meaning: "精神の、精神的な", note: "⇔ physical（身体の）",
+        collocation: "mental health",
+        exEn: "The company focuses on the mental health of its workers.",
+        exJa: "その会社は労働者の精神の健康に重点を置いている。" },
+      { unit: 103, no: 1020, word: "married", phon: "mærid", kana: "マリド", pos: "形",
+        meaning: "結婚した", note: "▶ marry（動）〜と結婚する / get married to A",
+        collocation: "be married to her",
+        exEn: "Jim has been married to her for 10 years.",
+        exJa: "ジムは10年間彼女と結婚している（彼女と結婚して10年になる）。" },
+      { unit: 103, no: 1021, word: "significant", phon: "signífikənt", kana: "スィグニフィカント", pos: "形",
+        meaning: "①重大な、重要な　②かなりの", note: "名 significance（重要性）",
+        collocation: "a significant change",
+        exEn: "We are facing a significant change in the environment.",
+        exJa: "私たちは自然環境の重大な変化に直面している。" },
+      { unit: 103, no: 1022, word: "responsible", phon: "rispánsəbl", kana: "リスパンスィブル", pos: "形",
+        meaning: "責任のある", note: "名 responsibility（責任）",
+        collocation: "be responsible for the accident",
+        exEn: "Who was responsible for the airplane accident?",
+        exJa: "だれがその飛行機事故に責任があったのか。" },
+      { unit: 103, no: 1023, word: "moral", phon: "mɔ́(:)rəl", kana: "モー（ラ）ル", pos: "形",
+        meaning: "道徳（上）の、道徳的な", note: "",
+        collocation: "a moral issue",
+        exEn: "Let's consider the moral issue of using cellphones in trains.",
+        exJa: "電車で携帯電話を使用することの道徳上の問題を考えよう。" },
+      { unit: 103, no: 1024, word: "double", phon: "dʌbl", kana: "ダブル", pos: "形",
+        meaning: "形 2倍の、二重の / 動 〜を2倍にする", note: "",
+        collocation: "double the size",
+        exEn: "This box is double the size of that one.",
+        exJa: "この箱はあの箱の2倍の大きさである。" },
+      { unit: 104, no: 1025, word: "gradually", phon: "grædʒuəli", kana: "グラヂュアリィ", pos: "副",
+        meaning: "徐々に", note: "形 gradual（徐々の）",
+        collocation: "gradually increase",
+        exEn: "The number of visitors has gradually increased in Yakushima.",
+        exJa: "屋久島では観光客が徐々に増えている。" },
+      { unit: 104, no: 1026, word: "increasingly", phon: "inkrí:siŋli", kana: "インクリースィングリィ", pos: "副",
+        meaning: "ますます", note: "形 increasing（増えつつある）",
+        collocation: "become increasingly popular",
+        exEn: "Online shopping is becoming increasingly popular.",
+        exJa: "ネットショッピングはますます人気が出ている。" },
+      { unit: 104, no: 1027, word: "directly", phon: "dərèktli", kana: "ディレクトリィ", pos: "副",
+        meaning: "直接に", note: "形 direct（直接の）⇔ indirectly（間接的に）",
+        collocation: "sell directly",
+        exEn: "The farmer sells directly to his customers.",
+        exJa: "その農場主は顧客に直接販売している。" },
+      { unit: 104, no: 1028, word: "relatively", phon: "rélətivli", kana: "レラティヴリィ", pos: "副",
+        meaning: "比較的", note: "形 relative（比較上の）",
+        collocation: "relatively easy",
+        exEn: "The English exam was relatively easy for me.",
+        exJa: "その英語の試験は私には比較的簡単だった。" },
+      { unit: 104, no: 1029, word: "mainly", phon: "méinli", kana: "メインリィ", pos: "副",
+        meaning: "主に", note: "形 main（主な）",
+        collocation: "mainly because ...",
+        exEn: "Ken went to college mainly because he wanted to study Japanese history.",
+        exJa: "ケンは主に日本史を勉強したいという理由で大学へ行った。" },
+      { unit: 104, no: 1030, word: "widely", phon: "wáidli", kana: "ワイドリィ", pos: "副",
+        meaning: "広く", note: "形 wide（広い）",
+        collocation: "be widely used",
+        exEn: "The medicine is widely used all over the world.",
+        exJa: "その薬は世界中で広く用いられている。" },
+      { unit: 104, no: 1031, word: "frequently", phon: "frí:kwəntli", kana: "フリークウェントリィ", pos: "副",
+        meaning: "頻繁に", note: "形 frequent（頻繁な）",
+        collocation: "frequently go out",
+        exEn: "Mary frequently goes out with her mother.",
+        exJa: "メアリーは頻繁にお母さんと出かける。" },
+      { unit: 104, no: 1032, word: "otherwise", phon: "áðərwàiz", kana: "アザワイズ", pos: "副",
+        meaning: "そうしないと、そうでないと", note: "",
+        collocation: "Otherwise, ...",
+        exEn: "Leave now. Otherwise, you will be late for school.",
+        exJa: "今すぐ出発しなさい。そうしないと、学校に遅れますよ。" },
+      { unit: 104, no: 1033, word: "somewhere", phon: "sʌ̀mhwɛ́ər", kana: "サムホウェア", pos: "副",
+        meaning: "どこかで（に、へ）", note: "",
+        collocation: "somewhere in London",
+        exEn: "I met the lady somewhere in London.",
+        exJa: "私はその婦人にロンドンのどこかで会った。" },
+      { unit: 104, no: 1034, word: "anywhere", phon: "énihwɛ̀ər", kana: "エニ（ホ）ウェア", pos: "副",
+        meaning: "どこでも、どこへでも", note: "疑問文では「どこかに」の意味にも",
+        collocation: "anywhere in Japan",
+        exEn: "You can use this airplane ticket anywhere in Japan.",
+        exJa: "この航空券は日本中どこでも使うことができる。" },
+      { unit: 105, no: 1035, word: "succeed", phon: "səksí:d", kana: "サクスィード", pos: "動",
+        meaning: "成功する", note: "⇔ fail（失敗する）/ 名 success（成功）",
+        collocation: "succeed in losing weight",
+        exEn: "The young boxer finally succeeded in losing weight.",
+        exJa: "その若いボクサーはやっと減量に成功した。" },
+      { unit: 105, no: 1036, word: "examine", phon: "igzǽmin", kana: "イグザミン", pos: "動",
+        meaning: "①調べる　②試験する", note: "名 examination（調査・試験）",
+        collocation: "examine what ...",
+        exEn: "The engineer examined what was wrong with the machine.",
+        exJa: "技術者はその機械のどこが悪いのかを調べた。" },
+      { unit: 105, no: 1037, word: "score", phon: "skɔːr", kana: "スコーァ", pos: "動",
+        meaning: "得点を取る、得点する", note: "名 score（得点）",
+        collocation: "score three goals",
+        exEn: "He scored three goals in today's soccer game.",
+        exJa: "彼は今日のサッカーの試合で3点を取った。" },
+      { unit: 105, no: 1038, word: "ignore", phon: "ignɔ́ːr", kana: "イグノーァ", pos: "動",
+        meaning: "〜を無視する", note: "",
+        collocation: "ignore a phone call",
+        exEn: "Lisa was so angry that she ignored his phone call.",
+        exJa: "リサはとても怒っていたので彼からの電話を無視した。" },
+      { unit: 105, no: 1039, word: "attempt", phon: "ətémpt", kana: "アテンプト", pos: "動",
+        meaning: "〜を試みる、〜しようとする", note: "名 attempt（試み）",
+        collocation: "attempt to swim",
+        exEn: "Some people attempted to swim between England and France.",
+        exJa: "英仏間を泳いで渡ろうとした人もいる。" },
+      { unit: 105, no: 1040, word: "invent", phon: "invént", kana: "インヴェント", pos: "動",
+        meaning: "〜を発明する", note: "名 invention（発明品）",
+        collocation: "invent the telephone",
+        exEn: "Alexander Graham Bell invented the telephone in 1876.",
+        exJa: "アレクサンダー・グラハム・ベルは1876年に電話を発明した。" },
+      { unit: 105, no: 1041, word: "release", phon: "rilí:s", kana: "リリース", pos: "動",
+        meaning: "①〜を解き放す、自由にする　②（危険などから）逃れる", note: "",
+        collocation: "release a bird",
+        exEn: "Andy decided to release his bird from the cage.",
+        exJa: "アンディーはかごから彼の鳥を逃がすことに決めた。" },
+      { unit: 105, no: 1042, word: "escape", phon: "iskéip", kana: "イスケイプ", pos: "動",
+        meaning: "①逃げる　②（危険などから）逃れる", note: "名 escape（脱走・逃亡）",
+        collocation: "escape from a building",
+        exEn: "All of them escaped from the burning building.",
+        exJa: "彼らはみんな燃えている建物から逃げた。" },
+      { unit: 105, no: 1043, word: "tie", phon: "tai", kana: "タイ", pos: "動",
+        meaning: "（ひもなどで）〜を結びつける", note: "名 tie（①ネクタイ　②つながり）",
+        collocation: "tie a tag to a bag",
+        exEn: "Tie your name tag to your bag before the flight.",
+        exJa: "飛行機に乗る前にあなたのバッグに名札を結びつけなさい。" },
+      { unit: 105, no: 1044, word: "conclude", phon: "kənklú:d", kana: "コンクルード", pos: "動",
+        meaning: "…であると結論づける", note: "名 conclusion（結論）",
+        collocation: "conclude (that) ...",
+        exEn: "He concluded from the report that they needed further research.",
+        exJa: "彼はそのレポートからさらなる調査が必要であると結論づけた。" },
+    ],
+  };
+
+  function vocabWordToQA(w){
+    const q = `${w.word}　/${w.phon}/ ${w.kana}`;
+    const lines = [w.meaning];
+    if(w.note) lines.push(`（${w.note}）`);
+    lines.push("");
+    lines.push(`▸ ${w.collocation}`);
+    lines.push(w.exEn);
+    lines.push(w.exJa);
+    return { q, a: lines.join("\n") };
+  }
+
   function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
   function formatLocalDate(d){
     const y = d.getFullYear();
@@ -468,6 +636,27 @@ ${instructions}
     return sub;
   }
 
+  function seedVocabDeck(){
+    const sub = findOrCreateSubject(VOCAB_DECK.subjectName);
+    const existing = state.sessions.find(s => s.subjectId === sub.id && s.title === VOCAB_DECK.sessionTitle);
+    if(existing){
+      save();
+      toast("すでに追加されています");
+      nav({ view: "session", id: existing.id });
+      return;
+    }
+    const session = { id: uid(), subjectId: sub.id, title: VOCAB_DECK.sessionTitle, notes: "", createdAt: todayStr() };
+    state.sessions.push(session);
+    const today = todayStr();
+    VOCAB_DECK.words.forEach(w => {
+      const { q, a } = vocabWordToQA(w);
+      state.questions.push({ id: uid(), sessionId: session.id, q, a, box: 0, dueDate: today, correctCount: 0, wrongCount: 0, lastReviewed: null });
+    });
+    save();
+    toast(`${VOCAB_DECK.words.length}問を追加しました`);
+    nav({ view: "session", id: session.id });
+  }
+
   // ---- render ----
   function render(){
     const app = document.getElementById("app");
@@ -481,6 +670,7 @@ ${instructions}
   function renderHome(){
     const allDue = dueQuestions(state.questions).length;
     const uncategorized = state.sessions.filter(s => !s.subjectId);
+    const vocabDeckAdded = state.sessions.some(s => s.title === VOCAB_DECK.sessionTitle);
     const subjectCards = state.subjects.map(sub => {
       const sess = sessionsForSubject(sub.id);
       const qIds = sess.map(s => s.id);
@@ -526,6 +716,7 @@ ${instructions}
       <div class="row" style="margin:4px 0 14px;">
         <button class="btn primary" data-action="new-note">＋ 新しい学習ノート</button>
         <button class="btn" data-action="new-subject">＋ 科目を追加</button>
+        ${vocabDeckAdded ? "" : `<button class="btn" data-action="seed-vocab">📇 英単語Unit103-105を追加</button>`}
       </div>
       <div class="grid">
         ${subjectCards}${uncatCard}
@@ -684,6 +875,8 @@ ${instructions}
         nav({ view: "subject", id: sub.id });
       });
     }));
+
+    actionEl('[data-action="seed-vocab"]').forEach(el => el.addEventListener("click", seedVocabDeck));
 
     actionEl('[data-action="delete-subject"]').forEach(el => el.addEventListener("click", () => {
       const id = el.dataset.id;
