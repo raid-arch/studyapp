@@ -626,9 +626,116 @@
     };
   }
 
+  /* ===================== deck: 英単語（Lesson3-4 プリント） ===================== */
+  const LESSON_VOCAB_GROUPS = [
+    { id: "L3S1", label: "Lesson3-1", color: "#2f6e5c" },
+    { id: "L3S2", label: "Lesson3-2", color: "#a9762f" },
+    { id: "L3S3", label: "Lesson3-3", color: "#4a7fc2" },
+    { id: "L4S1", label: "Lesson4-1", color: "#c24a32" },
+    { id: "L4S2", label: "Lesson4-2", color: "#7a4fb0" },
+    { id: "L4S3", label: "Lesson4-3", color: "#3f8f7a" },
+    { id: "L4S4", label: "Lesson4-4", color: "#b0862f" },
+  ];
+  const LESSON_VOCAB_ITEMS = [
+    { group: "L3S1", word: "engage(d)", pos: "動（他）", meaning: "従事させる", def: "to cause someone to do a particular activity" },
+    { group: "L3S1", word: "fund", pos: "名", meaning: "基金", def: "an amount of money that is saved or available to be spent for a particular purpose" },
+    { group: "L3S1", word: "foundation", pos: "名", meaning: "財団", def: "an organization which is established to give money for a special purpose, for example for research or charity" },
+    { group: "L3S1", word: "launch(ed)", pos: "動（他）", meaning: "開始する（ローンチ）", def: "to start an activity, usually a big, important or organized one" },
+    { group: "L3S1", word: "annual", pos: "形", meaning: "毎年（回）の", def: "happening once every year" },
+    { group: "L3S1", word: "award", pos: "名", meaning: "賞、賞金", def: "a prize or money given to someone in honor of an achievement" },
+    { group: "L3S1", word: "sympathize", pos: "動（自）", meaning: "共感する、理解する", def: "to share or understand someone's ideas, ambitions, etc." },
+    { group: "L3S1", word: "profound", pos: "形", meaning: "深い、深刻な", def: "very great or strong" },
+    { group: "L3S1", word: "mayor", pos: "名", meaning: "市長", def: "a person who is elected to lead the government of a town or city" },
+    { group: "L3S1", word: "media", pos: "名", meaning: "マスコミ", def: "the main means by which people receive information or news, such as television, radio, newspaper, etc." },
+    { group: "L3S1", word: "tweet(ed)", pos: "動（他）", meaning: "ツイートする", def: "to send a short message on the social media website Twitter" },
+    { group: "L3S1", word: "recovery", pos: "名", meaning: "回復", def: "the process of returning to a normal condition after a difficulty such as an illness, a disaster, etc." },
+    { group: "L3S1", word: "disaster", pos: "名", meaning: "災害、大惨事", def: "an unexpected event, such as a very bad accident or earthquake, flood, etc. that kills a lot of people or causes great damage" },
+
+    { group: "L3S2", word: "distribute(d)", pos: "動（他）", meaning: "分配する", def: "to hand or deliver things to a large number of people" },
+    { group: "L3S2", word: "flier(s)", pos: "名", meaning: "チラシ、広告", def: "a small sheet of paper advertising something that is distributed to many people" },
+    { group: "L3S2", word: "seldom", pos: "副", meaning: "めったに〜ない", def: "not often or almost never" },
+    { group: "L3S2", word: "roux", pos: "名", meaning: "ルー", def: "a mixture of fat and flour that is used for making sauce" },
+    { group: "L3S2", word: "accustomed", pos: "形", meaning: "慣れた", def: "familiar with something" },
+    { group: "L3S2", word: "accomplishment", pos: "名", meaning: "達成、業績", def: "something impressive that has been done successfully" },
+    { group: "L3S2", word: "intend(ed)", pos: "動（他）", meaning: "意図する、〜するつもりである", def: "to have as a purpose or plan" },
+    { group: "L3S2", word: "yummy", pos: "形", meaning: "おいしい", def: "tasting very good, delicious" },
+    { group: "L3S2", word: "perceive(d)", pos: "動（他）", meaning: "知覚する、気づく", def: "to realize or understand" },
+
+    { group: "L3S3", word: "promoting < promote", pos: "動（他）", meaning: "促進する、宣伝する", def: "to support or encourage something to develop, increase, spread, etc." },
+    { group: "L3S3", word: "ethical", pos: "形", meaning: "倫理的な、道徳的な", def: "relating to beliefs about what is right and wrong" },
+    { group: "L3S3", word: "consumption", pos: "名", meaning: "消費", def: "the amount of energy, electricity, food etc. that is used, or the act of using them" },
+    { group: "L3S3", word: "labor", pos: "名", meaning: "労働", def: "work, especially hard physical work" },
+    { group: "L3S3", word: "stem", pos: "動（他）", meaning: "止める、食い止める", def: "to stop something undesirable from spreading, increasing or developing" },
+    { group: "L3S3", word: "organic", pos: "形", meaning: "有機栽培の", def: "relating to farming or gardening without using artificial chemicals" },
+    { group: "L3S3", word: "fair-trade", pos: "形", meaning: "フェアトレードの", def: "involving trade between companies in developed countries and producers in developing countries, in which fair prices are paid to the producers and good working conditions are guaranteed" },
+    { group: "L3S3", word: "goods", pos: "名", meaning: "商品", def: "things that are produced to be sold" },
+    { group: "L3S3", word: "Peruvian", pos: "形", meaning: "ペルーの、ペルー人の", def: "from Peru or related to Peru" },
+    { group: "L3S3", word: "Mongolian", pos: "形", meaning: "モンゴルの、モンゴル人の", def: "from Mongolia or related to Mongolia" },
+    { group: "L3S3", word: "craft(s)", pos: "名", meaning: "工芸（品）", def: "an activity in which you make things by hand such as weaving, carving, pottery, etc. and usually you need skill to do it" },
+    { group: "L3S3", word: "Zambian", pos: "形", meaning: "ザンビアの、ザンビア人の", def: "from Zambia or related to Zambia" },
+
+    { group: "L4S1", word: "announcement", pos: "名", meaning: "お知らせ、発表", def: "a spoken or written statement of information that is given to people" },
+    { group: "L4S1", word: "departure", pos: "名", meaning: "出発", def: "the act of leaving a place, especially to start a journey" },
+    { group: "L4S1", word: "belt", pos: "名", meaning: "ベルト", def: "a long narrow piece of leather or cloth that you fasten around your waist" },
+    { group: "L4S1", word: "fasten(ed)", pos: "動（他）", meaning: "しっかり固定する", def: "to make something firmly fixed in position" },
+    { group: "L4S1", word: "securely", pos: "副", meaning: "しっかりと、固く", def: "in a fixed or steady manner, so that something does not move, fall down, etc." },
+    { group: "L4S1", word: "Helsinki", pos: "名", meaning: "ヘルシンキ", def: "the capital of Finland" },
+    { group: "L4S1", word: "Vantaa", pos: "名", meaning: "ヴァンター", def: "a city in southern Finland, close to Helsinki" },
+    { group: "L4S1", word: "inflight", pos: "形", meaning: "飛行中の", def: "served or happening during a plane flight" },
+    { group: "L4S1", word: "cabin", pos: "名", meaning: "機内、キャビン", def: "an area in a plane where passengers sit" },
+    { group: "L4S1", word: "ginger ale", pos: "名", meaning: "ジンジャーエール", def: "a sparkling nonalcoholic drink flavored with ginger and often mixed with an alcoholic drink" },
+    { group: "L4S1", word: "Celsius", pos: "形", meaning: "摂氏の", def: "a scale of temperature in which water freezes at 0 degrees and boils at 100 degrees" },
+    { group: "L4S1", word: "Fahrenheit", pos: "形", meaning: "華氏の", def: "a scale of temperature in which water freezes at 32 degrees and boils at 212 degrees" },
+    { group: "L4S1", word: "Kiitos", pos: "", meaning: "（フィンランド語で）ありがとう", def: "Finnish expression which means \"Thank you.\"" },
+
+    { group: "L4S2", word: "Lapland", pos: "名", meaning: "ラップランド", def: "a region of northern Europe lying within the Arctic Circle. It consists of the northern parts of Norway, Sweden, Finland, and Russia." },
+    { group: "L4S2", word: "Rovaniemi", pos: "名", meaning: "ロヴァニエミ", def: "a city in northern Finland, known as the official home of Santa Claus" },
+    { group: "L4S2", word: "Santa Claus", pos: "名", meaning: "サンタクロース", def: "an imaginary old man with a long white beard and red clothes. Children believe he brings them Christmas presents." },
+    { group: "L4S2", word: "Korvatunturi", pos: "名", meaning: "コルヴァトゥントゥリ", def: "a hill in Lapland, on the border between Finland and Russia" },
+    { group: "L4S2", word: "Arctic", pos: "形・名", meaning: "北極の、北極", def: "the northernmost region of the world around the North Pole" },
+    { group: "L4S2", word: "respond(s)", pos: "動（自）", meaning: "返答する", def: "to say or write something in reply" },
+    { group: "L4S2", word: "healing", pos: "名・形", meaning: "癒し（の）", def: "the process of becoming or making someone well and healthy again" },
+    { group: "L4S2", word: "tender", pos: "形", meaning: "優しい", def: "showing gentleness, kindness or sympathy" },
+    { group: "L4S2", word: "hug(ged)", pos: "動（他）", meaning: "抱きしめる", def: "to put your arms around someone and hold them tightly, especially to show love or friendship" },
+
+    { group: "L4S3", word: "refined", pos: "形", meaning: "上品な、洗練された", def: "having elegant, cultured appearance, taste, etc." },
+    { group: "L4S3", word: "typical", pos: "形", meaning: "典型的な", def: "having the most usual features of a particular type of person or thing" },
+    { group: "L4S3", word: "mug(s)", pos: "名", meaning: "マグカップ", def: "a large cup for hot drinks, typically with straight sides and a handle, used without a saucer" },
+    { group: "L4S3", word: "pouch(es)", pos: "名", meaning: "小袋、ポーチ", def: "a small bag made of leather, cloth, etc., often carried in a pocket or attached to a belt" },
+    { group: "L4S3", word: "miscellaneous", pos: "形", meaning: "雑多な、種々の", def: "consisting of various types of things that are not connected with each other and difficult to be categorized" },
+    { group: "L4S3", word: "soothing", pos: "形", meaning: "心地よい、なだめる", def: "having a calming or relieving effect on somebody who is anxious, upset, etc." },
+    { group: "L4S3", word: "handy", pos: "形", meaning: "便利な", def: "easy to handle or use; useful" },
+    { group: "L4S3", word: "souvenir(s)", pos: "名", meaning: "記念品、お土産", def: "a thing that you buy or keep to remind yourself of an occasion, a holiday or a place you have visited" },
+    { group: "L4S3", word: "obvious", pos: "形", meaning: "明らかな", def: "easy to see or understand; clear" },
+    { group: "L4S3", word: "severe", pos: "形", meaning: "厳しい、深刻な", def: "very bad or strict" },
+    { group: "L4S3", word: "vivid", pos: "形", meaning: "（色が）鮮やかな", def: "(of a color) very bright" },
+    { group: "L4S3", word: "significance", pos: "名", meaning: "重要性", def: "the importance of something, especially because it will have an effect on a situation in the future" },
+    { group: "L4S3", word: "handiness", pos: "名", meaning: "便利さ", def: "the quality of being easy to handle or use" },
+    { group: "L4S3", word: "elegance", pos: "名", meaning: "上品さ、優雅さ", def: "the quality of being attractive and stylish, and showing a good taste" },
+    { group: "L4S3", word: "Finnish", pos: "形", meaning: "フィンランドの、フィンランド語の", def: "relating to Finland or its people or language" },
+
+    { group: "L4S4", word: "positively", pos: "副", meaning: "肯定的に、前向きに", def: "in a way that shows you are thinking good points about something rather than bad ones" },
+  ];
+
+  function buildLessonVocabCard(item, index) {
+    const frontBody = `
+      <div class="term">${esc(item.word)}</div>
+    `;
+    const backBody = `
+      <div class="meaning">${esc(item.meaning)}</div>
+      <div class="example"><div class="ex-en">${esc(item.def)}</div></div>
+    `;
+    const groupMeta = LESSON_VOCAB_GROUPS.find((g) => g.id === item.group);
+    return {
+      id: `lv-${index}`, groupId: item.group, label: groupMeta.label, tag: item.pos.charAt(0),
+      frontBody, backBody, groupLabel: groupMeta.label, groupColor: groupMeta.color,
+    };
+  }
+
   /* ===================== deck registry ===================== */
   const DECKS = [
-    { id: "vocab", label: "英単語", groups: VOCAB_UNITS, cards: VOCAB_WORDS.map(buildVocabCard) },
+    { id: "vocab", label: "英単語（ターゲット）", groups: VOCAB_UNITS, cards: VOCAB_WORDS.map(buildVocabCard) },
+    { id: "lessonvocab", label: "英単語（L3-4）", groups: LESSON_VOCAB_GROUPS, cards: LESSON_VOCAB_ITEMS.map(buildLessonVocabCard) },
     { id: "history", label: "世界史・日本史", groups: HISTORY_GROUPS, cards: HISTORY_ITEMS.map(buildHistoryCard) },
     { id: "calc", label: "微分公式", groups: CALC_GROUPS, cards: CALC_ITEMS.map(buildCalcCard) },
   ];
