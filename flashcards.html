@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>フラッシュカード</title>
+<style>
+  :root {
+    --bg: #eef1ee;
+    --ink: #1b2521;
+    --ink-soft: #46534c;
+    --muted: #75817a;
+    --line: #d7dbd2;
+    --card-bg: #fdfcf9;
+    --card-shadow: 220, 224, 216;
+    --accent: #2f6e5c;
+    --accent-ink: #f4faf7;
+    --accent-soft: #dcebe4;
+    --coral: #c24a32;
+    --coral-soft: #f3d9cd;
+    --coral-mark: #f6c6b3;
+    --focus: #2f6e5c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121714;
+      --ink: #e9ede9;
+      --ink-soft: #b7c1ba;
+      --muted: #7f8b83;
+      --line: #2a332c;
+      --card-bg: #1b2320;
+      --card-shadow: 0, 0, 0;
+      --accent: #63bfa0;
+      --accent-ink: #0d1613;
+      --accent-soft: #223a32;
+      --coral: #e2896a;
+      --coral-soft: #3a2a22;
+      --coral-mark: #4a3324;
+      --focus: #63bfa0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121714; --ink: #e9ede9; --ink-soft: #b7c1ba; --muted: #7f8b83;
+    --line: #2a332c; --card-bg: #1b2320; --card-shadow: 0, 0, 0;
+    --accent: #63bfa0; --accent-ink: #0d1613; --accent-soft: #223a32;
+    --coral: #e2896a; --coral-soft: #3a2a22; --coral-mark: #4a3324; --focus: #63bfa0;
+  }
+  :root[data-theme="light"] {
+    --bg: #eef1ee; --ink: #1b2521; --ink-soft: #46534c; --muted: #75817a;
+    --line: #d7dbd2; --card-bg: #fdfcf9; --card-shadow: 220, 224, 216;
+    --accent: #2f6e5c; --accent-ink: #f4faf7; --accent-soft: #dcebe4;
+    --coral: #c24a32; --coral-soft: #f3d9cd; --coral-mark: #f6c6b3; --focus: #2f6e5c;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    background-image: radial-gradient(circle at 1px 1px, rgba(127,139,131,0.16) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { min-height: 100vh; display: flex; justify-content: center; padding: 28px 16px 48px; }
+  .page { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 16px; }
+
+  header { display: flex; flex-direction: column; gap: 4px; padding: 2px 2px 4px; }
+  .eyebrow {
+    font: 600 11px/1 ui-monospace, "SF Mono", Consolas, monospace;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+  }
+  h1 { margin: 0; font: 700 26px/1.15 Georgia, "Iowan Old Style", "Hiragino Mincho ProN", serif; letter-spacing: 0.01em; }
+  .sub { margin: 0; font-size: 13px; color: var(--muted); }
+
+  /* ---------- tabs (used for both deck selector and group filter) ---------- */
+  .tabs { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 2px; -ms-overflow-style: none; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 6px;
+    padding: 7px 12px 7px 9px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--card-bg); color: var(--ink-soft); font-size: 12.5px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; transition: background .15s, color .15s, border-color .15s;
+  }
+  .tab .chip { width: 8px; height: 8px; border-radius: 2px; background: var(--tab-color, var(--muted)); flex: 0 0 auto; }
+  .tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .tab[aria-selected="true"] .chip { background: var(--accent-ink); }
+  .tab .n { opacity: .7; font-variant-numeric: tabular-nums; }
+  .deck-tabs .tab { font-size: 13.5px; padding: 9px 14px 9px 11px; }
+
+  /* ---------- toolbar ---------- */
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-soft); cursor: pointer; user-select: none; }
+  .toggle input { accent-color: var(--accent); width: 14px; height: 14px; }
+  .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+    border-radius: 8px; border: 1px solid var(--line); background: var(--card-bg); color: var(--ink-soft);
+    cursor: pointer; font-size: 15px; line-height: 1; transition: transform .15s, background .15s, color .15s;
+  }
+  .icon-btn:hover { color: var(--ink); }
+  .icon-btn[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  .icon-btn:active { transform: scale(0.92); }
+  .toolbar-actions { display: flex; align-items: center; gap: 8px; }
+
+  /* ---------- stats ---------- */
+  .stats { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stats b { color: var(--ink); font-weight: 700; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  .dot.again { background: var(--coral); }
+  .dot.got { background: var(--accent); }
+  .progress-track { flex: 1; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s ease; }
+
+  /* ---------- deck ---------- */
+  .deck-wrap { position: relative; min-height: 430px; }
+  .deck-shadow { position: absolute; inset: 0; border-radius: 18px; background: var(--card-bg); border: 1px solid var(--line); }
+  .deck-shadow.s2 { transform: translateY(14px) scale(0.94); opacity: .45; }
+  .deck-shadow.s1 { transform: translateY(7px) scale(0.97); opacity: .7; }
+
+  .card { position: absolute; inset: 0; border-radius: 18px; cursor: pointer; perspective: 1400px; outline: none; }
+  .card:focus-visible .card-inner { box-shadow: 0 0 0 3px var(--focus); }
+  .card-inner {
+    position: relative; width: 100%; height: 100%; border-radius: 18px;
+    transition: transform .5s cubic-bezier(.2,.8,.3,1); transform-style: preserve-3d;
+  }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  @media (prefers-reduced-motion: reduce) { .card-inner, .progress-fill, .icon-btn { transition: none !important; } }
+
+  .card-face {
+    position: absolute; inset: 0; border-radius: 18px; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    background: var(--card-bg); border: 1px solid var(--line); box-shadow: 0 18px 34px -18px rgba(var(--card-shadow), .55);
+    padding: 22px 22px 18px; display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .card-back { transform: rotateY(180deg); }
+
+  .face-top {
+    display: flex; align-items: center; justify-content: space-between;
+    font: 600 11px/1 ui-monospace, "SF Mono", Consolas, monospace; letter-spacing: .06em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .pos-tag {
+    display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
+    border-radius: 6px; background: var(--accent-soft); color: var(--accent);
+    font-family: -apple-system, "Hiragino Sans", sans-serif; font-size: 12px; font-weight: 700;
+    text-transform: none; letter-spacing: 0;
+  }
+  .pos-tag.wrong-tag { background: var(--coral-soft); color: var(--coral); }
+  .pos-tag:empty { display: none; }
+
+  /* front face */
+  .card-front { align-items: flex-start; justify-content: center; text-align: left; gap: 14px; }
+  .term {
+    font: 700 44px/1.05 Georgia, "Iowan Old Style", serif; letter-spacing: -0.01em;
+    word-break: break-word; text-wrap: balance;
+  }
+  .term.sm { font: 500 17px/1.65 Georgia, "Hiragino Mincho ProN", serif; letter-spacing: 0; white-space: pre-wrap; }
+  .phon { font: 500 15px/1.4 ui-monospace, "SF Mono", Consolas, monospace; color: var(--ink-soft); }
+  .phon .kana { color: var(--muted); font-family: -apple-system, "Hiragino Sans", sans-serif; margin-left: 6px; }
+  .choice-list { display: flex; flex-direction: column; gap: 4px; margin-top: -4px; }
+  .choice-line { font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+  .choice-line b { color: var(--ink); margin-right: 4px; }
+  .tap-hint { margin-top: auto; align-self: center; font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .tap-hint svg { opacity: .6; }
+
+  /* back face */
+  .card-back { justify-content: flex-start; gap: 12px; }
+  .meaning { font: 700 25px/1.3 Georgia, "Iowan Old Style", "Hiragino Mincho ProN", serif; color: var(--accent); text-wrap: balance; }
+  .note { font-size: 12px; color: var(--muted); margin-top: -6px; }
+  .collocation {
+    display: inline-block; align-self: flex-start; padding: 4px 9px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 600;
+  }
+  .example { border-top: 1px dashed var(--line); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .ex-en { font-size: 14.5px; line-height: 1.55; color: var(--ink); }
+  .ex-en mark { background: var(--coral-mark); color: var(--ink); padding: 0 2px; border-radius: 3px; }
+  .ex-ja { font-size: 12.5px; line-height: 1.6; color: var(--muted); }
+
+  /* ---------- judge row ---------- */
+  .judge-row {
+    display: flex; gap: 10px; opacity: 0; transform: translateY(6px); pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .judge-row.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .judge-btn {
+    flex: 1; padding: 13px 10px; border-radius: 12px; border: 1.5px solid transparent;
+    font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform .12s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .judge-btn:active { transform: scale(0.97); }
+  .judge-btn.again { background: var(--coral-soft); color: var(--coral); border-color: var(--coral); }
+  .judge-btn.got { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .judge-btn kbd { font: 600 10px/1 ui-monospace, monospace; opacity: .6; border: 1px solid currentColor; border-radius: 3px; padding: 1px 4px; }
+
+  /* ---------- nav row ---------- */
+  .nav-row { display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .nav-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--card-bg);
+    color: var(--ink-soft); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: opacity .15s, transform .12s;
+  }
+  .nav-btn:active { transform: scale(0.92); }
+  .nav-btn:disabled { opacity: .35; cursor: default; }
+  .nav-index { font: 600 12.5px/1 ui-monospace, monospace; color: var(--muted); min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; }
+
+  /* ---------- empty / done state ---------- */
+  .done {
+    position: absolute; inset: 0; border-radius: 18px; background: var(--card-bg); border: 1px solid var(--line);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 32px 24px;
+  }
+  .done[hidden] { display: none; }
+  .done .big { font: 700 22px/1.3 Georgia, serif; text-wrap: balance; }
+  .done .tally { display: flex; gap: 18px; font-size: 13px; color: var(--muted); }
+  .done .tally b { color: var(--ink); }
+  .done-actions { display: flex; gap: 10px; margin-top: 6px; }
+  .pill-btn {
+    padding: 10px 16px; border-radius: 10px; border: 1.5px solid var(--line); background: transparent;
+    color: var(--ink-soft); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .pill-btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+  footer { text-align: center; font-size: 11px; color: var(--muted); padding-top: 4px; }
+  footer kbd { font: 600 10px/1 ui-monospace, monospace; border: 1px solid var(--line); border-radius: 3px; padding: 1px 4px; margin: 0 1px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <span class="eyebrow">Flashcards</span>
+    <h1>フラッシュカード</h1>
+    <p class="sub" id="deckSub">読み込み中…</p>
+  </header>
+
+  <div class="tabs deck-tabs" id="deckTabs" role="tablist"></div>
+  <div class="tabs" id="groupTabs" role="tablist"></div>
+
+  <div class="toolbar">
+    <label class="toggle">
+      <input type="checkbox" id="hideMastered" />
+      習得済みを除く
+    </label>
+    <div class="toolbar-actions">
+      <button class="icon-btn" id="shuffleBtn" title="シャッフル" aria-pressed="false">⤨</button>
+      <button class="icon-btn" id="resetBtn" title="進捗をリセット">↺</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <span><span class="dot got"></span><b id="gotCount">0</b> 覚えた</span>
+    <span><span class="dot again"></span><b id="againCount">0</b> もう一度</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <span id="remainLabel">0 / 0</span>
+  </div>
+
+  <div class="deck-wrap" id="deckWrap">
+    <div class="deck-shadow s2"></div>
+    <div class="deck-shadow s1"></div>
+    <div class="card" id="card" tabindex="0" role="button" aria-label="カードをめくる">
+      <div class="card-inner" id="cardInner">
+        <div class="card-face card-front">
+          <div class="face-top">
+            <span id="frontLabel"></span>
+            <span class="pos-tag" id="posTag"></span>
+          </div>
+          <div id="frontBody"></div>
+          <div class="tap-hint">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+            タップして答えを見る
+          </div>
+        </div>
+        <div class="card-face card-back">
+          <div class="face-top">
+            <span id="backLabel"></span>
+            <span class="pos-tag" id="posTagBack"></span>
+          </div>
+          <div id="backBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="done" id="doneScreen" hidden>
+      <div class="big" id="doneMsg">このセットは終わりです</div>
+      <div class="tally">
+        <span>覚えた <b id="doneGot">0</b></span>
+        <span>もう一度 <b id="doneAgain">0</b></span>
+      </div>
+      <div class="done-actions">
+        <button class="pill-btn" id="reviewAgainBtn">もう一度だけ復習</button>
+        <button class="pill-btn primary" id="restartBtn">最初から</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="judge-row" id="judgeRow">
+    <button class="judge-btn again" id="againBtn">もう一度 <kbd>1</kbd></button>
+    <button class="judge-btn got" id="gotBtn">覚えた <kbd>2</kbd></button>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn" title="前へ">←</button>
+    <span class="nav-index" id="navIndex">1 / 1</span>
+    <button class="nav-btn" id="nextBtn" title="次へ">→</button>
+  </div>
+
+  <footer>
+    <kbd>Space</kbd> めくる &nbsp; <kbd>←</kbd><kbd>→</kbd> 移動 &nbsp; <kbd>1</kbd>/<kbd>2</kbd> 判定
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function highlight(sentence, key) {
+    if (!key) return sentence;
+    const idx = sentence.indexOf(key);
+    if (idx === -1) return sentence;
+    return sentence.slice(0, idx) + "<mark>" + sentence.slice(idx, idx + key.length) + "</mark>" + sentence.slice(idx + key.length);
+  }
+
+  /* ===================== deck: 英単語 ===================== */
+  const VOCAB_UNITS = [
+    { id: 103, label: "Unit103 形容詞", color: "#2f6e5c" },
+    { id: 104, label: "Unit104 副詞②", color: "#a9762f" },
+    { id: 105, label: "Unit105 動詞⑥", color: "#c24a32" },
+  ];
+  const VOCAB_WORDS = [
+    { unit: 103, no: 1015, word: "complicated", phon: "kámplakèitid", kana: "カンプリケイティド", pos: "形",
+      meaning: "複雑な、込み入った", note: "⇔ simple（単純な）", collocation: "a complicated relationship",
+      exEn: "There are some complicated relationships between the two nations.",
+      exJa: "その2国間にはいくつかの複雑な関係がある。", key: "complicated relationships" },
+    { unit: 103, no: 1016, word: "complex", phon: "kámpleks", kana: "カンプレックス", pos: "形",
+      meaning: "複雑な、入り組んだ", note: "⇔ simple（単純な）", collocation: "a complex system",
+      exEn: "The country has a complex political system.",
+      exJa: "その国は複雑な政治制度を持っている。", key: "complex political system" },
+    { unit: 103, no: 1017, word: "impossible", phon: "impásəbl", kana: "インパスィブル", pos: "形",
+      meaning: "不可能な", note: "⇔ possible（可能な）", collocation: "be impossible to believe",
+      exEn: "It is impossible for me to believe Jack's words.",
+      exJa: "私がジャックの言葉を信じるのは不可能だ。", key: "impossible for me to believe" },
+    { unit: 103, no: 1018, word: "unique", phon: "ju(:)ní:k", kana: "ユ（ー）ニーク", pos: "形",
+      meaning: "①独特な　②唯一の", note: "", collocation: "a unique ability",
+      exEn: "She has a unique ability to speak seven languages.",
+      exJa: "彼女には7か国語を話す独特な能力がある。", key: "unique ability" },
+    { unit: 103, no: 1019, word: "mental", phon: "méntl", kana: "メントル", pos: "形",
+      meaning: "精神の、精神的な", note: "⇔ physical（身体の）", collocation: "mental health",
+      exEn: "The company focuses on the mental health of its workers.",
+      exJa: "その会社は労働者の精神の健康に重点を置いている。", key: "mental health" },
+    { unit: 103, no: 1020, word: "married", phon: "mærid", kana: "マリド", pos: "形",
+      meaning: "結婚した", note: "▶ marry（動）〜と結婚する / get married to A", collocation: "be married to her",
+      exEn: "Jim has been married to her for 10 years.",
+      exJa: "ジムは10年間彼女と結婚している（彼女と結婚して10年になる）。", key: "married to her" },
+    { unit: 103, no: 1021, word: "significant", phon: "signífikənt", kana: "スィグニフィカント", pos: "形",
+      meaning: "①重大な、重要な　②かなりの", note: "名 significance（重要性）", collocation: "a significant change",
+      exEn: "We are facing a significant change in the environment.",
+      exJa: "私たちは自然環境の重大な変化に直面している。", key: "significant change" },
+    { unit: 103, no: 1022, word: "responsible", phon: "rispánsəbl", kana: "リスパンスィブル", pos: "形",
+      meaning: "責任のある", note: "名 responsibility（責任）", collocation: "be responsible for the accident",
+      exEn: "Who was responsible for the airplane accident?",
+      exJa: "だれがその飛行機事故に責任があったのか。", key: "responsible for the airplane accident" },
+    { unit: 103, no: 1023, word: "moral", phon: "mɔ́(:)rəl", kana: "モー（ラ）ル", pos: "形",
+      meaning: "道徳（上）の、道徳的な", note: "", collocation: "a moral issue",
+      exEn: "Let's consider the moral issue of using cellphones in trains.",
+      exJa: "電車で携帯電話を使用することの道徳上の問題を考えよう。", key: "moral issue" },
+    { unit: 103, no: 1024, word: "double", phon: "dʌbl", kana: "ダブル", pos: "形",
+      meaning: "形 2倍の、二重の / 動 〜を2倍にする", note: "", collocation: "double the size",
+      exEn: "This box is double the size of that one.",
+      exJa: "この箱はあの箱の2倍の大きさである。", key: "double the size" },
+    { unit: 104, no: 1025, word: "gradually", phon: "grædʒuəli", kana: "グラヂュアリィ", pos: "副",
+      meaning: "徐々に", note: "形 gradual（徐々の）", collocation: "gradually increase",
+      exEn: "The number of visitors has gradually increased in Yakushima.",
+      exJa: "屋久島では観光客が徐々に増えている。", key: "gradually increased" },
+    { unit: 104, no: 1026, word: "increasingly", phon: "inkrí:siŋli", kana: "インクリースィングリィ", pos: "副",
+      meaning: "ますます", note: "形 increasing（増えつつある）", collocation: "become increasingly popular",
+      exEn: "Online shopping is becoming increasingly popular.",
+      exJa: "ネットショッピングはますます人気が出ている。", key: "increasingly popular" },
+    { unit: 104, no: 1027, word: "directly", phon: "dərèktli", kana: "ディレクトリィ", pos: "副",
+      meaning: "直接に", note: "形 direct（直接の）⇔ indirectly（間接的に）", collocation: "sell directly",
+      exEn: "The farmer sells directly to his customers.",
+      exJa: "その農場主は顧客に直接販売している。", key: "sells directly" },
+    { unit: 104, no: 1028, word: "relatively", phon: "rélətivli", kana: "レラティヴリィ", pos: "副",
+      meaning: "比較的", note: "形 relative（比較上の）", collocation: "relatively easy",
+      exEn: "The English exam was relatively easy for me.",
+      exJa: "その英語の試験は私には比較的簡単だった。", key: "relatively easy" },
+    { unit: 104, no: 1029, word: "mainly", phon: "méinli", kana: "メインリィ", pos: "副",
+      meaning: "主に", note: "形 main（主な）", collocation: "mainly because ...",
+      exEn: "Ken went to college mainly because he wanted to study Japanese history.",
+      exJa: "ケンは主に日本史を勉強したいという理由で大学へ行った。", key: "mainly because" },
+    { unit: 104, no: 1030, word: "widely", phon: "wáidli", kana: "ワイドリィ", pos: "副",
+      meaning: "広く", note: "形 wide（広い）", collocation: "be widely used",
+      exEn: "The medicine is widely used all over the world.",
+      exJa: "その薬は世界中で広く用いられている。", key: "widely used" },
+    { unit: 104, no: 1031, word: "frequently", phon: "frí:kwəntli", kana: "フリークウェントリィ", pos: "副",
+      meaning: "頻繁に", note: "形 frequent（頻繁な）", collocation: "frequently go out",
+      exEn: "Mary frequently goes out with her mother.",
+      exJa: "メアリーは頻繁にお母さんと出かける。", key: "frequently goes out" },
+    { unit: 104, no: 1032, word: "otherwise", phon: "áðərwàiz", kana: "アザワイズ", pos: "副",
+      meaning: "そうしないと、そうでないと", note: "", collocation: "Otherwise, ...",
+      exEn: "Leave now. Otherwise, you will be late for school.",
+      exJa: "今すぐ出発しなさい。そうしないと、学校に遅れますよ。", key: "Otherwise" },
+    { unit: 104, no: 1033, word: "somewhere", phon: "sʌ̀mhwɛ́ər", kana: "サムホウェア", pos: "副",
+      meaning: "どこかで（に、へ）", note: "", collocation: "somewhere in London",
+      exEn: "I met the lady somewhere in London.",
+      exJa: "私はその婦人にロンドンのどこかで会った。", key: "somewhere in London" },
+    { unit: 104, no: 1034, word: "anywhere", phon: "énihwɛ̀ər", kana: "エニ（ホ）ウェア", pos: "副",
+      meaning: "どこでも、どこへでも", note: "疑問文では「どこかに」の意味にも", collocation: "anywhere in Japan",
+      exEn: "You can use this airplane ticket anywhere in Japan.",
+      exJa: "この航空券は日本中どこでも使うことができる。", key: "anywhere in Japan" },
+    { unit: 105, no: 1035, word: "succeed", phon: "səksí:d", kana: "サクスィード", pos: "動",
+      meaning: "成功する", note: "⇔ fail（失敗する）/ 名 success（成功）", collocation: "succeed in losing weight",
+      exEn: "The young boxer finally succeeded in losing weight.",
+      exJa: "その若いボクサーはやっと減量に成功した。", key: "succeeded in losing weight" },
+    { unit: 105, no: 1036, word: "examine", phon: "igzǽmin", kana: "イグザミン", pos: "動",
+      meaning: "①調べる　②試験する", note: "名 examination（調査・試験）", collocation: "examine what ...",
+      exEn: "The engineer examined what was wrong with the machine.",
+      exJa: "技術者はその機械のどこが悪いのかを調べた。", key: "examined what was wrong" },
+    { unit: 105, no: 1037, word: "score", phon: "skɔːr", kana: "スコーァ", pos: "動",
+      meaning: "得点を取る、得点する", note: "名 score（得点）", collocation: "score three goals",
+      exEn: "He scored three goals in today's soccer game.",
+      exJa: "彼は今日のサッカーの試合で3点を取った。", key: "scored three goals" },
+    { unit: 105, no: 1038, word: "ignore", phon: "ignɔ́ːr", kana: "イグノーァ", pos: "動",
+      meaning: "〜を無視する", note: "", collocation: "ignore a phone call",
+      exEn: "Lisa was so angry that she ignored his phone call.",
+      exJa: "リサはとても怒っていたので彼からの電話を無視した。", key: "ignored his phone call" },
+    { unit: 105, no: 1039, word: "attempt", phon: "ətémpt", kana: "アテンプト", pos: "動",
+      meaning: "〜を試みる、〜しようとする", note: "名 attempt（試み）", collocation: "attempt to swim",
+      exEn: "Some people attempted to swim between England and France.",
+      exJa: "英仏間を泳いで渡ろうとした人もいる。", key: "attempted to swim" },
+    { unit: 105, no: 1040, word: "invent", phon: "invént", kana: "インヴェント", pos: "動",
+      meaning: "〜を発明する", note: "名 invention（発明品）", collocation: "invent the telephone",
+      exEn: "Alexander Graham Bell invented the telephone in 1876.",
+      exJa: "アレクサンダー・グラハム・ベルは1876年に電話を発明した。", key: "invented the telephone" },
+    { unit: 105, no: 1041, word: "release", phon: "rilí:s", kana: "リリース", pos: "動",
+      meaning: "①〜を解き放す、自由にする　②（危険などから）逃れる", note: "", collocation: "release a bird",
+      exEn: "Andy decided to release his bird from the cage.",
+      exJa: "アンディーはかごから彼の鳥を逃がすことに決めた。", key: "release his bird" },
+    { unit: 105, no: 1042, word: "escape", phon: "iskéip", kana: "イスケイプ", pos: "動",
+      meaning: "①逃げる　②（危険などから）逃れる", note: "名 escape（脱走・逃亡）", collocation: "escape from a building",
+      exEn: "All of them escaped from the burning building.",
+      exJa: "彼らはみんな燃えている建物から逃げた。", key: "escaped from the burning building" },
+    { unit: 105, no: 1043, word: "tie", phon: "tai", kana: "タイ", pos: "動",
+      meaning: "（ひもなどで）〜を結びつける", note: "名 tie（①ネクタイ　②つながり）", collocation: "tie a tag to a bag",
+      exEn: "Tie your name tag to your bag before the flight.",
+      exJa: "飛行機に乗る前にあなたのバッグに名札を結びつけなさい。", key: "Tie your name tag to your bag" },
+    { unit: 105, no: 1044, word: "conclude", phon: "kənklú:d", kana: "コンクルード", pos: "動",
+      meaning: "…であると結論づける", note: "名 conclusion（結論）", collocation: "conclude (that) ...",
+      exEn: "He concluded from the report that they needed further research.",
+      exJa: "彼はそのレポートからさらなる調査が必要であると結論づけた。", key: "concluded from the report that" },
+  ];
+
+  function buildVocabCard(w) {
+    const frontBody = `
+      <div class="term">${esc(w.word)}</div>
+      <div class="phon">/${esc(w.phon)}/<span class="kana">${esc(w.kana)}</span></div>
+    `;
+    const backBody = `
+      <div class="meaning">${esc(w.meaning)}</div>
+      ${w.note ? `<div class="note">${esc(w.note)}</div>` : ""}
+      <div class="collocation">${esc(w.collocation)}</div>
+      <div class="example">
+        <div class="ex-en">${highlight(esc(w.exEn), w.key)}</div>
+        <div class="ex-ja">${esc(w.exJa)}</div>
+      </div>
+    `;
+    const unitMeta = VOCAB_UNITS.find((u) => u.id === w.unit);
+    return {
+      id: `vocab-${w.no}`, groupId: w.unit, label: `UNIT ${w.unit} · ${w.no}`, tag: w.pos,
+      frontBody, backBody, groupLabel: unitMeta.label, groupColor: unitMeta.color,
+    };
+  }
+
+  /* ===================== deck: 世界史・日本史 ===================== */
+  const HISTORY_GROUPS = [
+    { id: 1, label: "大問1", color: "#2f6e5c" },
+    { id: 2, label: "大問2", color: "#a9762f" },
+    { id: 3, label: "大問3", color: "#c24a32" },
+  ];
+  const HISTORY_ITEMS = [
+    { daimon: 1, no: 1, instr: "correct",
+      stem: "18世紀後半から19世紀半ばにかけて、ヨーロッパを中心に各地で絶対王政に対して市民が蜂起し、実力で市民の自由・平等、政治的権利などを獲得する【空欄】が起こった。",
+      choices: ["民族運動", "労働運動", "産業革命", "市民革命"], answer: 3,
+      explain: "絶対王政に対して市民が武力で自由・平等・政治的権利を勝ち取った一連の出来事を市民革命と呼ぶ（ピューリタン革命・アメリカ独立革命・フランス革命など）。" },
+    { daimon: 1, no: 2, instr: "correct",
+      stem: "イギリスでは名誉革命を経てメアリ2世とウィリアム3世が即位し、王権に対する議会の優位性の主張を法文化した【空欄】が定められた。",
+      choices: ["人権宣言", "権利の章典", "独立宣言", "権利の宣言"], answer: 1,
+      explain: "1689年、議会の権利を法文化した権利の章典（Bill of Rights）が制定された。「権利の宣言」はその前段階として即位時に提示された文書。" },
+    { daimon: 1, no: 3, instr: "correct",
+      stem: "フランス革命やナポレオン戦争をきっかけに、権利や法における平等の理想が諸国へ広まった結果、民族の統一や国家の独立を目指す【空欄】の運動がさかんになった。",
+      choices: ["ナショナリズム", "バンダリズム", "民主主義", "自由主義"], answer: 0,
+      explain: "民族の統一・独立を求める思想・運動をナショナリズム（国民主義・民族主義）と呼ぶ。バンダリズムは破壊行為を指し無関係。" },
+    { daimon: 1, no: 4, instr: "correct",
+      stem: "1814〜1815年に開催された、フランス革命戦争およびナポレオン戦争の戦後処理に関する会議の結果、フランス革命以前の状態回復と勢力均衡を目指した国際秩序である【空欄】が成立した。",
+      choices: ["パリ=コミューン", "第4回対仏大同盟", "ウィーン体制", "神聖同盟"], answer: 2,
+      explain: "ウィーン会議（1814〜15年）の結果成立した国際秩序をウィーン体制という。神聖同盟はこの体制を支えた列強間の同盟の一つ。" },
+    { daimon: 1, no: 5, instr: "correct",
+      stem: "19世紀のヨーロッパでは、資本主義の害悪を是正する対抗理論として社会主義（共産主義）の思想が登場した。【空欄】は仲間とともに『共産党宣言』を出版して社会革命の必要を説き、さらに『資本論』において資本家による労働者の搾取のメカニズムを解明した。",
+      choices: ["エンゲルス", "フィヒテ", "マルクス", "ビスマルク"], answer: 2,
+      explain: "マルクスはエンゲルスとともに『共産党宣言』を発表し、単独で『資本論』を著した。" },
+    { daimon: 1, no: 6, instr: "correct",
+      stem: "オーストリアによる支配が続く地域を中心に統一への動きが高まり、各地が併合されるなどして1861年には【空欄】王国が成立した。さらなる併合・占領を続けた一方で、オーストリア領のままとなった地域は「未回収の【空欄】」と呼ばれた。※2つの【空欄】には同じ語句が入る。",
+      choices: ["トリエステ", "サルデーニャ", "イタリア", "ドイツ"], answer: 2,
+      explain: "1861年にサルデーニャ王国を中心にイタリア王国が成立した。オーストリア領に残った未統一地域は「未回収のイタリア」と呼ばれた。" },
+    { daimon: 1, no: 7, instr: "correct",
+      stem: "1868年の【空欄】によって、広く意見を取り入れる政治という新政府の方針が示された。",
+      choices: ["五箇条の御誓文", "王政復古の大号令", "五榜の掲示", "大政奉還"], answer: 0,
+      explain: "五箇条の御誓文（1868年）は「広く会議を興し万機公論に決すべし」など新政府の基本方針を示した。" },
+    { daimon: 1, no: 8, instr: "correct",
+      stem: "新政府は欧米諸国に追いつき対等な関係を築くため、地租改正など【空欄】の改革を行った。",
+      choices: ["殖産興業", "文明開化", "明治維新", "富国強兵"], answer: 3,
+      explain: "地租改正は安定した財源を確保するための改革で、富国強兵政策を支える財政基盤となった。" },
+    { daimon: 1, no: 9, instr: "correct",
+      stem: "第2次産業革命により、原料・燃料の供給地や商品の輸出市場としての植民地の重要性が見直された。その結果、新たな植民地を求め非ヨーロッパ世界へ進出する【空欄】の動きが強まった。",
+      choices: ["列強主義", "帝国主義", "共産主義", "植民地主義"], answer: 1,
+      explain: "列強が資源・市場を求めてアジア・アフリカ等へ進出する動きを帝国主義という。" },
+    { daimon: 1, no: 10, instr: "correct",
+      stem: "1902年、日本はロシアの勢力拡大に対抗して、同じくロシアを脅威に感じていた【空欄】と同盟を結んだ。",
+      choices: ["清朝", "イギリス", "フランス", "アメリカ"], answer: 1,
+      explain: "1902年に日英同盟が締結された。" },
+    { daimon: 2, no: 1, instr: "correct",
+      stem: "市民革命に関して、以下の選択肢のうち正しいものはどれか。",
+      choices: [
+        "ジェントリなどの新興層に独占権が与えられたことで貴族や大商人が不満を持ち、ピューリタン革命が起こった。",
+        "革命以前のフランスでは身分制がしかれ、第一身分（聖職者）のみ免税の特権が認められた。",
+        "アメリカ独立戦争の結果成立したアメリカ合衆国では、奴隷や先住民を含めたすべての人民の主権による共和政が定められた。",
+        "フランス革命では民衆の支持のもと、ジャコバン派のロベスピエールによる独裁が行われた。",
+      ], answer: 3,
+      explain: "エが正しい。アは独占権を得た層と不満を持った層の関係が逆。イはフランスでは第一身分（聖職者）だけでなく第二身分（貴族）も免税特権を持っていた。ウは奴隷や先住民は主権の対象に含まれていなかった。" },
+    { daimon: 2, no: 2, instr: "correct",
+      stem: "ナポレオン時代のヨーロッパについて、以下の選択肢のうち正しいものはどれか。",
+      choices: [
+        "1806年の大陸封鎖令によって、ヨーロッパの大陸諸国との貿易が全面禁止されたことで、イギリスは大打撃を受けた。",
+        "ナポレオンによる征服の結果、農民開放による農奴制廃止などのプロイセン改革が行われた。",
+        "フランス・スペイン連合艦隊が派遣され、トラファルガーの海戦でイギリス艦隊を撃破した。",
+        "度重なる対外戦争での敗北の責任を負ったナポレオンは、1814年に退位しセントヘレナ島に流刑となったが、のちに島を脱出し再びパリに入った。",
+      ], answer: 1,
+      explain: "イが正しい（シュタイン・ハルデンベルクによるプロイセン改革）。アは大陸封鎖令がイギリスに致命的打撃を与えたとは言えない。ウはトラファルガーの海戦では逆にイギリス艦隊が仏西連合艦隊を撃破した。エの1814年の流刑先はセントヘレナ島ではなくエルバ島（セントヘレナ島への流刑はワーテルローの戦い後の1815年）。" },
+    { daimon: 2, no: 3, instr: "correct",
+      stem: "ウィーン体制崩壊後のヨーロッパについて、次の選択肢から正しいものはどれか。",
+      choices: [
+        "南下政策のもと1853年にクリミア戦争を仕掛けたロシアは、戦争に勝利し黒海を獲得した。",
+        "ナポレオン3世が統治を行った第二帝政の時期に、下水道整備や放射状の道の敷設が行われ、現在に至るパリの街並みの原型が成立した。",
+        "19世紀半ば以降のイギリスは、エリザベス女王の治世に繁栄の絶頂期を迎えた。",
+        "ロシアでは皇帝アレクサンドル2世のもと、インテリゲンツィアが主導するかたちで農奴解放令の改革が行われた。",
+      ], answer: 1,
+      explain: "イが正しい（パリ改造）。アはロシアはクリミア戦争に敗北している。ウは19世紀の繁栄はヴィクトリア女王の治世であり、エリザベス女王（16世紀）ではない。エの農奴解放令は皇帝主導の「上からの改革」であり、インテリゲンツィア主導ではない。" },
+    { daimon: 2, no: 4, instr: "wrong",
+      stem: "南北戦争について、以下の選択肢のうち間違っているものはどれか。",
+      choices: [
+        "工業化が進んでいた北部と、奴隷制に基づく南部のように、経済構造が南北で異なっていた。",
+        "奴隷制存続を望む南部の州が合衆国から離脱し、アメリカ連合国（南部連合）を結成した。",
+        "奴隷制に反対する派閥が民主党を結成し、1860年にリンカンを大統領に当選させた。",
+        "大陸横断鉄道が開通したことで農業や工業が一層発達し、アメリカの発展につながった。",
+      ], answer: 2,
+      explain: "ウが誤り。奴隷制に反対しリンカンを大統領に当選させたのは共和党であり、民主党ではない。他の記述はすべて正しい。" },
+    { daimon: 3, no: 1, instr: "correct",
+      stem: "1889年2月11日に大日本帝国憲法（明治憲法）が公布された。この憲法について正しい説明はどれか。",
+      choices: [
+        "各地で起草された憲法の私案（私擬憲法）に基づいて制定された",
+        "内閣総理大臣が国民に授ける欽定憲法の形式がとられた",
+        "天皇の強大な権限も定めたが、陸海軍の統帥権については内閣のみ関与することができた",
+        "不平等条約改正のため、欧米水準の法典の整備が進められたことで制定に至った",
+      ], answer: 3,
+      explain: "エが正しい。条約改正交渉を有利に進めるため、欧米水準の法典整備の一環として制定された。アは私擬憲法ではなくプロイセン型の憲法を模範とした。イは天皇が国民に授ける欽定憲法であり、内閣総理大臣が授けたのではない。ウの陸海軍の統帥権は内閣ではなく天皇に直属する「統帥権の独立」が特徴。" },
+    { daimon: 3, no: 2, instr: "correct",
+      stem: "日清戦争に勝利した日本は1895年に下関条約を結び、遼東半島などの割譲や多額の賠償金を得たが、【空欄】の三国干渉によって遼東半島を清朝に返還した。",
+      choices: ["ロシア・フランス・ドイツ", "ロシア・フランス・アメリカ", "イギリス・アメリカ・ドイツ", "イギリス・朝鮮・清朝"], answer: 0,
+      explain: "1895年の三国干渉はロシア・フランス・ドイツの3か国による。" },
+  ];
+
+  function buildHistoryCard(item) {
+    const LETTERS = ["ア", "イ", "ウ", "エ"];
+    const frontBody = `
+      <div class="term sm">${esc(item.stem)}</div>
+      <div class="choice-list">
+        ${item.choices.map((c, i) => `<div class="choice-line"><b>${LETTERS[i]}</b>${esc(c)}</div>`).join("")}
+      </div>
+    `;
+    const backBody = `
+      <div class="meaning">${LETTERS[item.answer]}　${esc(item.choices[item.answer])}</div>
+      <div class="example"><div class="ex-en">${esc(item.explain)}</div></div>
+    `;
+    const groupMeta = HISTORY_GROUPS.find((g) => g.id === item.daimon);
+    return {
+      id: `history-${item.daimon}-${item.no}`, groupId: item.daimon, label: `大問${item.daimon} · 問${item.no}`,
+      tag: item.instr === "wrong" ? "誤" : "正", tagWrong: item.instr === "wrong",
+      frontBody, backBody, groupLabel: groupMeta.label, groupColor: groupMeta.color,
+    };
+  }
+
+  /* ===================== deck: 微分公式 ===================== */
+  const CALC_GROUPS = [
+    { id: "三角関数", label: "三角関数", color: "#2f6e5c" },
+    { id: "対数関数", label: "対数関数", color: "#a9762f" },
+    { id: "指数関数", label: "指数関数", color: "#4a7fc2" },
+    { id: "逆三角関数", label: "逆三角関数", color: "#c24a32" },
+  ];
+  const CALC_ITEMS = [
+    { group: "三角関数", func: "sin x", deriv: "cos x", note: "" },
+    { group: "三角関数", func: "cos x", deriv: "-sin x", note: "" },
+    { group: "三角関数", func: "tan x", deriv: "1/cos²x", note: "= sec²x = 1+tan²x とも書ける。" },
+    { group: "三角関数", func: "cot x", deriv: "-1/sin²x", note: "= -csc²x = -(1+cot²x) とも書ける。" },
+    { group: "三角関数", func: "sec x", deriv: "sec x・tan x", note: "" },
+    { group: "三角関数", func: "csc x", deriv: "-csc x・cot x", note: "" },
+    { group: "対数関数", func: "log x", deriv: "1/x", note: "log x は自然対数 logₑx（= ln x）のこと。log|x| の導関数も同じく 1/x。" },
+    { group: "対数関数", func: "log_a x", deriv: "1/(x・log a)", note: "log a は a の自然対数。底の変換公式 log_a x = log x / log a から導ける。" },
+    { group: "指数関数", func: "e^x", deriv: "e^x", note: "微分しても形が変わらない唯一の関数（e の定義そのもの）。" },
+    { group: "指数関数", func: "a^x", deriv: "a^x・log a", note: "a^x = e^(x・log a) と変形し、合成関数の微分から導ける。" },
+    { group: "逆三角関数", func: "sin⁻¹x", deriv: "1/√(1-x²)", note: "Arcsin x とも書く。定義域 -1<x<1、値域 -π/2<y<π/2。" },
+    { group: "逆三角関数", func: "cos⁻¹x", deriv: "-1/√(1-x²)", note: "Arccos x とも書く。定義域 -1<x<1、値域 0<y<π。" },
+    { group: "逆三角関数", func: "tan⁻¹x", deriv: "1/(1+x²)", note: "Arctan x とも書く。値域 -π/2<y<π/2。" },
+    { group: "逆三角関数", func: "cot⁻¹x", deriv: "-1/(1+x²)", note: "Arccot x とも書く。値域 0<y<π。" },
+    { group: "逆三角関数", func: "sec⁻¹x", deriv: "1/(|x|√(x²-1))", note: "Arcsec x とも書く。|x|≥1。" },
+    { group: "逆三角関数", func: "csc⁻¹x", deriv: "-1/(|x|√(x²-1))", note: "Arccsc x とも書く。|x|≥1。" },
+  ];
+
+  function buildCalcCard(item, index) {
+    const frontBody = `<div class="term">(${esc(item.func)})′</div>`;
+    const backBody = `
+      <div class="meaning">= ${esc(item.deriv)}</div>
+      ${item.note ? `<div class="example"><div class="ex-en">${esc(item.note)}</div></div>` : ""}
+    `;
+    const groupMeta = CALC_GROUPS.find((g) => g.id === item.group);
+    return {
+      id: `calc-${index}`, groupId: item.group, label: item.group, tag: "",
+      frontBody, backBody, groupLabel: groupMeta.label, groupColor: groupMeta.color,
+    };
+  }
+
+  /* ===================== deck registry ===================== */
+  const DECKS = [
+    { id: "vocab", label: "英単語", groups: VOCAB_UNITS, cards: VOCAB_WORDS.map(buildVocabCard) },
+    { id: "history", label: "世界史・日本史", groups: HISTORY_GROUPS, cards: HISTORY_ITEMS.map(buildHistoryCard) },
+    { id: "calc", label: "微分公式", groups: CALC_GROUPS, cards: CALC_ITEMS.map(buildCalcCard) },
+  ];
+
+  const STORAGE_KEY = "flashcards-app-store-v1";
+  const store = loadStore();
+  function loadStore() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { got: [], again: [] };
+  }
+  function saveStore() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
+  }
+  const gotSet = new Set(store.got);
+  const againSet = new Set(store.again);
+  function persist() {
+    store.got = [...gotSet];
+    store.again = [...againSet];
+    saveStore();
+  }
+
+  // ---- state ----
+  let activeDeckId = DECKS[0].id;
+  let activeGroup = "all";
+  let hideMastered = false;
+  let shuffled = false;
+  let order = [];
+  let pos = 0;
+  let flipped = false;
+  let sessionGot = 0;
+  let sessionAgain = 0;
+  let reviewPool = null;
+
+  const $ = (id) => document.getElementById(id);
+  const deckTabsEl = $("deckTabs");
+  const groupTabsEl = $("groupTabs");
+  const card = $("card");
+  const judgeRow = $("judgeRow");
+  const doneScreen = $("doneScreen");
+
+  function activeDeck() { return DECKS.find((d) => d.id === activeDeckId); }
+
+  function buildDeckTabs() {
+    DECKS.forEach((d) => {
+      const btn = document.createElement("button");
+      btn.className = "tab";
+      btn.setAttribute("role", "tab");
+      btn.dataset.deck = d.id;
+      btn.textContent = d.label;
+      btn.addEventListener("click", () => {
+        activeDeckId = d.id;
+        activeGroup = "all";
+        reviewPool = null;
+        renderDeckTabs();
+        buildGroupTabs();
+        rebuildOrder();
+      });
+      deckTabsEl.appendChild(btn);
+    });
+    renderDeckTabs();
+  }
+  function renderDeckTabs() {
+    [...deckTabsEl.children].forEach((btn) => {
+      btn.setAttribute("aria-selected", btn.dataset.deck === activeDeckId ? "true" : "false");
+    });
+  }
+
+  function buildGroupTabs() {
+    groupTabsEl.innerHTML = "";
+    const deck = activeDeck();
+    const all = { id: "all", label: "すべて", color: "#75817a" };
+    [all, ...deck.groups].forEach((g) => {
+      const btn = document.createElement("button");
+      btn.className = "tab";
+      btn.setAttribute("role", "tab");
+      btn.style.setProperty("--tab-color", g.color);
+      btn.dataset.group = g.id;
+      btn.innerHTML = `<span class="chip"></span>${esc(g.label)}<span class="n"></span>`;
+      btn.addEventListener("click", () => {
+        activeGroup = g.id;
+        reviewPool = null;
+        rebuildOrder();
+        renderGroupTabs();
+      });
+      groupTabsEl.appendChild(btn);
+    });
+    renderGroupTabs();
+  }
+
+  function countFor(groupId) {
+    const deck = activeDeck();
+    let list = groupId === "all" ? deck.cards : deck.cards.filter((c) => c.groupId === groupId);
+    if (hideMastered) list = list.filter((c) => !gotSet.has(c.id));
+    return list.length;
+  }
+
+  function renderGroupTabs() {
+    [...groupTabsEl.children].forEach((btn) => {
+      const rawId = btn.dataset.group;
+      const deck = activeDeck();
+      const g = deck.groups.find((x) => String(x.id) === rawId);
+      const id = rawId === "all" ? "all" : (g ? g.id : rawId);
+      const selected = id === activeGroup;
+      btn.setAttribute("aria-selected", selected ? "true" : "false");
+      btn.querySelector(".n").textContent = " (" + countFor(id) + ")";
+    });
+  }
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function rebuildOrder() {
+    const deck = activeDeck();
+    let list;
+    if (reviewPool) {
+      list = reviewPool.slice();
+    } else {
+      list = activeGroup === "all" ? deck.cards.slice() : deck.cards.filter((c) => c.groupId === activeGroup);
+      if (hideMastered) list = list.filter((c) => !gotSet.has(c.id));
+    }
+    if (shuffled) list = shuffle(list);
+    order = list;
+    pos = 0;
+    flipped = false;
+    sessionGot = 0;
+    sessionAgain = 0;
+    renderGroupTabs();
+    updateSub();
+    render();
+  }
+
+  function updateSub() {
+    const deck = activeDeck();
+    const groupLabel = activeGroup === "all" ? "すべて" : (deck.groups.find((g) => g.id === activeGroup) || {}).label;
+    $("deckSub").textContent = `${deck.label} · 全${deck.cards.length}枚 · ${groupLabel}`;
+  }
+
+  function render() {
+    doneScreen.hidden = order.length > 0 && pos < order.length;
+    card.style.display = doneScreen.hidden ? "block" : "none";
+    judgeRow.classList.toggle("show", false);
+
+    if (order.length === 0 || pos >= order.length) {
+      showDone();
+      updateStats();
+      return;
+    }
+
+    const c = order[pos];
+    card.classList.remove("flipped");
+    flipped = false;
+
+    $("frontLabel").textContent = c.label;
+    $("backLabel").textContent = c.label;
+    $("posTag").textContent = c.tag || "";
+    $("posTag").classList.toggle("wrong-tag", !!c.tagWrong);
+    $("posTagBack").textContent = c.tag || "";
+    $("posTagBack").classList.toggle("wrong-tag", !!c.tagWrong);
+    $("frontBody").innerHTML = c.frontBody;
+    $("backBody").innerHTML = c.backBody;
+
+    $("navIndex").textContent = `${pos + 1} / ${order.length}`;
+    $("prevBtn").disabled = pos === 0;
+    $("nextBtn").disabled = pos === order.length - 1;
+
+    updateStats();
+  }
+
+  function showDone() {
+    $("doneGot").textContent = sessionGot;
+    $("doneAgain").textContent = sessionAgain;
+    $("doneMsg").textContent = order.length === 0 ? "このセットにはカードがありません" : "このセットは終わりです";
+    $("reviewAgainBtn").hidden = sessionAgain === 0;
+  }
+
+  function updateStats() {
+    const deck = activeDeck();
+    const deckCardIds = new Set(deck.cards.map((c) => c.id));
+    let got = 0, again = 0;
+    gotSet.forEach((id) => { if (deckCardIds.has(id)) got++; });
+    againSet.forEach((id) => { if (deckCardIds.has(id)) again++; });
+    $("gotCount").textContent = got;
+    $("againCount").textContent = again;
+    const total = order.length || 1;
+    const done = Math.min(pos, order.length);
+    $("progressFill").style.width = Math.round((done / total) * 100) + "%";
+    const remaining = Math.max(order.length - pos, 0);
+    $("remainLabel").textContent = `残り ${remaining}`;
+  }
+
+  function flip() {
+    if (order.length === 0 || pos >= order.length) return;
+    flipped = !flipped;
+    card.classList.toggle("flipped", flipped);
+    judgeRow.classList.toggle("show", flipped);
+  }
+
+  function goTo(newPos) {
+    if (newPos < 0 || newPos >= order.length) return;
+    pos = newPos;
+    render();
+  }
+
+  function judge(kind) {
+    if (!flipped || pos >= order.length) return;
+    const c = order[pos];
+    if (kind === "got") {
+      gotSet.add(c.id);
+      againSet.delete(c.id);
+      sessionGot++;
+    } else {
+      againSet.add(c.id);
+      sessionAgain++;
+    }
+    persist();
+    pos++;
+    render();
+  }
+
+  // ---- events ----
+  card.addEventListener("click", flip);
+  card.addEventListener("keydown", (e) => {
+    if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); }
+  });
+  $("againBtn").addEventListener("click", () => judge("again"));
+  $("gotBtn").addEventListener("click", () => judge("got"));
+  $("prevBtn").addEventListener("click", () => goTo(pos - 1));
+  $("nextBtn").addEventListener("click", () => goTo(pos + 1));
+
+  $("shuffleBtn").addEventListener("click", () => {
+    shuffled = !shuffled;
+    $("shuffleBtn").setAttribute("aria-pressed", shuffled ? "true" : "false");
+    rebuildOrder();
+  });
+  $("hideMastered").addEventListener("change", (e) => {
+    hideMastered = e.target.checked;
+    reviewPool = null;
+    rebuildOrder();
+  });
+  $("resetBtn").addEventListener("click", () => {
+    if (!confirm("覚えた／もう一度の記録をすべてリセットしますか？")) return;
+    gotSet.clear();
+    againSet.clear();
+    persist();
+    reviewPool = null;
+    rebuildOrder();
+  });
+  $("restartBtn").addEventListener("click", () => {
+    reviewPool = null;
+    rebuildOrder();
+  });
+  $("reviewAgainBtn").addEventListener("click", () => {
+    const deck = activeDeck();
+    reviewPool = deck.cards.filter((c) => againSet.has(c.id) && (activeGroup === "all" || c.groupId === activeGroup));
+    rebuildOrder();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") goTo(pos + 1);
+    else if (e.key === "ArrowLeft") goTo(pos - 1);
+    else if (e.key === "1") judge("again");
+    else if (e.key === "2") judge("got");
+  });
+
+  buildDeckTabs();
+  buildGroupTabs();
+  rebuildOrder();
+})();
+</script>
+</body>
+</html>
